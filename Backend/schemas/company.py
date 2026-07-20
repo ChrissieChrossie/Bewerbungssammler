@@ -1,4 +1,4 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, HttpUrl  # pylint: disable=no-name-in-module
 
 
 class CompanyBase(BaseModel):

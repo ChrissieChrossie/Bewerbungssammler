@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr  # pylint: disable=no-name-in-module
 
 
 class UserBase(BaseModel):

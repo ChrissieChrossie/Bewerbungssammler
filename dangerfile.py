@@ -2,6 +2,10 @@ import json
 import os
 import traceback
 
+# danger, fail, warn und message werden von danger-python zur Laufzeit
+# als Globals injiziert und müssen daher nicht importiert werden.
+# pylint: disable=undefined-variable
+
 try:
     modified_files = danger.git.modified_files + danger.git.created_files
     python_files = [f for f in modified_files if f.endswith(".py")]
