@@ -32,7 +32,7 @@ jobs:
 
             - name: Run pylint
               run: |
-                  FILES=$(git ls-files 'Backend/*.py')
+                  FILES=$(git ls-files 'Backend/**/*.py' '*.py')
                   if [ -n "$FILES" ]; then
                       pylint --exit-zero --output-format=json:pylint-report.json,colorized $FILES
                   fi
