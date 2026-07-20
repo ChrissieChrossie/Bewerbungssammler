@@ -1,0 +1,42 @@
+name: PR Review
+
+on:
+    pull_request:
+        branches:
+            - main
+            - develop
+
+permissions:
+    contents: read
+    pull-requests: write
+
+jobs:
+    review:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+
+            - name: Setup Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+
+            - name: Install dependencies
+              run: |
+                  pip install -r Backend/requirements.txt
+                  pip install pylint danger-python
+
+            - name: Run pylint
+              run: |
+                  FILES=$(git ls-files 'Backend/*.py')
+                  if [ -n "$FILES" ]; then
+                      pylint --exit-zero --output-format=json:pylint-report.json,colorized $FILES
+                  fi
+
+            - name: Run Danger
+              env:
+                  DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: danger-python ci
