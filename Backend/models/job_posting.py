@@ -1,9 +1,13 @@
+"""Model für Stellenausschreibungen (Job Postings)."""
+
 from sqlalchemy import Column, Integer, String, Date, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
 
 
 class JobPosting(Base):
+    """Eine Stellenausschreibung eines Unternehmens."""
+
     __tablename__ = "job_postings"
 
     id = Column(Integer, primary_key=True, index=True)

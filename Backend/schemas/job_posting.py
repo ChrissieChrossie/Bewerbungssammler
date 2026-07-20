@@ -1,8 +1,12 @@
+"""Pydantic-Schemas für Stellenausschreibungen (Job Postings)."""
+
 from datetime import date
 from pydantic import BaseModel, HttpUrl  # pylint: disable=no-name-in-module
 
 
 class JobPostingBase(BaseModel):
+    """Gemeinsame Felder aller JobPosting-Schemas."""
+
     title: str
     posted_at: date | None = None
     link: HttpUrl | None = None
@@ -10,10 +14,12 @@ class JobPostingBase(BaseModel):
 
 
 class JobPostingCreate(JobPostingBase):
-    pass
+    """Schema zum Anlegen einer Stellenausschreibung."""
 
 
 class JobPostingUpdate(BaseModel):
+    """Schema zum teilweisen Aktualisieren einer Stellenausschreibung."""
+
     title: str | None = None
     posted_at: date | None = None
     link: HttpUrl | None = None
@@ -21,6 +27,8 @@ class JobPostingUpdate(BaseModel):
 
 
 class JobPostingRead(JobPostingBase):
+    """Schema zum Auslesen einer Stellenausschreibung."""
+
     id: int
 
     model_config = {"from_attributes": True}

@@ -1,3 +1,5 @@
+"""Datenbank-Setup: Engine, Session-Factory und Base-Klasse für die Models."""
+
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
@@ -13,11 +15,13 @@ connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite")
 
 engine = create_engine(DATABASE_URL, connect_args=connect_args)
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(  # pylint: disable=invalid-name
+    autocommit=False, autoflush=False, bind=engine
+)
 
 
 class Base(DeclarativeBase):
-    pass
+    """Gemeinsame Basisklasse für alle SQLAlchemy-Models."""
 
 
 def get_db():

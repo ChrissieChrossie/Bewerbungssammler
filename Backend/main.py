@@ -1,13 +1,16 @@
-from fastapi import FastAPI
+"""FastAPI-Einstiegspunkt: App-Instanz, Lifespan und Router-Registrierung."""
+
 from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
 
 from database import engine, Base
 from routers import users, companies, job_postings, applications
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Tabellen beim Start anlegen (für lokale Entwicklung / SQLite)
+async def lifespan(_app: FastAPI):
+    """Legt beim Start der App die Tabellen an (für lokale Entwicklung / SQLite)."""
     Base.metadata.create_all(bind=engine)
     yield
 
@@ -27,4 +30,5 @@ app.include_router(applications.router)
 
 @app.get("/", tags=["Health"])
 def health_check():
+    """Einfacher Health-Check-Endpunkt."""
     return {"status": "ok", "service": "Bewerbungssammler API"}
