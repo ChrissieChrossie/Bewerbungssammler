@@ -2,8 +2,6 @@ import json
 import os
 import traceback
 
-from danger import danger, fail, message, warn
-
 try:
     modified_files = danger.git.modified_files + danger.git.created_files
     python_files = [f for f in modified_files if f.endswith(".py")]
