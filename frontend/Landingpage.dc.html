@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: oklch(0.19 0.01 250); color: oklch(0.92 0.005 250); font-family: 'IBM Plex Sans', sans-serif; }
+  a { color: oklch(0.78 0.11 175); text-decoration: none; }
+  a:hover { color: oklch(0.85 0.11 175); }
+  ::selection { background: oklch(0.78 0.11 175 / 0.3); }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; display: flex; flex-direction: column;">
+
+  <header style="display: flex; align-items: center; gap: 8px; padding: 32px 48px;">
+    <span style="width: 8px; height: 8px; border-radius: 2px; background: oklch(0.78 0.11 175); display: inline-block;"></span>
+    <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 16px;">Cooler Name</span>
+  </header>
+
+  <main style="flex: 1; display: grid; grid-template-columns: 1fr; place-items: center; padding: 40px 48px;">
+    <div style="max-width: 520px;">
+      <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 48px; line-height: 1.15; font-weight: 600; margin: 0; letter-spacing: -0.02em; border-left: 3px solid oklch(0.78 0.11 175); padding-left: 28px;">Deine Bewerbungen.<br>An einem Ort.</h1>
+      <p style="font-size: 17px; line-height: 1.7; color: oklch(0.75 0.008 250); margin: 22px 0 0 31px; max-width: 380px;">Automatisiere deinen Bewerbungsprozess und behalte alle deine Anträge im Überblick. Easy!</p>
+    </div>
+  </main>
+
+  <footer style="padding: 28px 48px; border-top: 1px solid oklch(1 0 0 / 0.08); font-size: 13px; color: oklch(0.55 0.008 250); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+    <span>© 2026 Cooler Name - Christopher Wolter, Dennis Rapp</span>
+    <a href="mailto:kontakt@coolername.app">kontakt@coolername.app</a>
+  </footer>
+
+</div>
+
+</x-dc>
+</body>
+</html>
