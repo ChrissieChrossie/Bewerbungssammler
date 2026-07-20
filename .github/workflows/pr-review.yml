@@ -43,7 +43,7 @@ jobs:
                   node-version: "20"
 
             - name: Install danger-js
-              run: npm install -g danger
+              run: npm install -g danger@9.2.10
 
             - name: Run Danger
               env:
