@@ -43,7 +43,7 @@ variable "db_allocated_storage" {
 variable "db_engine_version" {
   description = "PostgreSQL-Engine-Version."
   type        = string
-  default     = "16.4"
+  default     = "16.14"
 }
 
 variable "allowed_cidr_blocks" {
