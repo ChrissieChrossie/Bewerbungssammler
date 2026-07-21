@@ -1,0 +1,6 @@
+# Kopieren nach terraform.tfvars und Werte anpassen. terraform.tfvars NICHT einchecken!
+
+db_password = "changeme-use-a-strong-password"
+
+# Eigene öffentliche IP mit /32, z.B. per "curl ifconfig.me" ermitteln.
+allowed_cidr_blocks = ["203.0.113.5/32"]
