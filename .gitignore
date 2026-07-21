@@ -15,3 +15,6 @@ terraform/**/*.tfstate
 terraform/**/*.tfstate.*
 terraform/**/terraform.tfvars
 terraform/**/*.tfplan
+/terraform/terrform-tfvars
+/terraform/terrform.tfvars
+/Backend/.env
