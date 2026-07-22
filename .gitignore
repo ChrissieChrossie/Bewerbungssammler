@@ -8,3 +8,6 @@ obj/
 # OS
 Thumbs.db
 .DS_Store
+
+# Environment files (enthalten Zugangsdaten, z.B. DATABASE_URL)
+.env
