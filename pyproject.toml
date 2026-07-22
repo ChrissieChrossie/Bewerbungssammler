@@ -1,0 +1,4 @@
+[tool.pylint."MESSAGES CONTROL"]
+disable = [
+    "too-few-public-methods",  # Pydantic-Schemas und SQLAlchemy-Models sind reine Datenklassen
+]

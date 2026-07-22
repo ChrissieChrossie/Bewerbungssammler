@@ -1,0 +1,21 @@
+meta {
+  name: Update Company
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/companies/{{companyId}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "homepage": "https://acme.example.com/careers"
+  }
+}

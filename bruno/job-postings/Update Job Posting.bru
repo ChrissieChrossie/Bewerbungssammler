@@ -1,0 +1,21 @@
+meta {
+  name: Update Job Posting
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/job-postings/{{jobPostingId}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "Senior Backend Developer"
+  }
+}
