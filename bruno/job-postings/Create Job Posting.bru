@@ -1,0 +1,30 @@
+meta {
+  name: Create Job Posting
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/job-postings/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "Backend Developer",
+    "posted_at": "2026-07-01",
+    "link": "https://acme.example.com/jobs/backend-developer",
+    "company_id": {{companyId}}
+  }
+}
+
+script:post-response {
+  if (res.body && res.body.id) {
+    bru.setVar("jobPostingId", res.body.id);
+  }
+}

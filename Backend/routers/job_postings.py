@@ -31,7 +31,10 @@ def create_job_posting(payload: JobPostingCreate, db: Session = Depends(get_db))
     """Legt eine neue Stellenausschreibung an."""
     if not db.query(Company).filter(Company.id == payload.company_id).first():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found")
-    job_posting = JobPosting(**payload.model_dump())
+    data = payload.model_dump()
+    if data["link"] is not None:
+        data["link"] = str(data["link"])
+    job_posting = JobPosting(**data)
     db.add(job_posting)
     db.commit()
     db.refresh(job_posting)
@@ -50,7 +53,10 @@ def update_job_posting(
         Company.id == payload.company_id
     ).first():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found")
-    for field, value in payload.model_dump(exclude_unset=True).items():
+    data = payload.model_dump(exclude_unset=True)
+    if data.get("link") is not None:
+        data["link"] = str(data["link"])
+    for field, value in data.items():
         setattr(job_posting, field, value)
     db.commit()
     db.refresh(job_posting)

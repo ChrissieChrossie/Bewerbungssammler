@@ -1,0 +1,31 @@
+meta {
+  name: Create Application
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/applications/
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "user_id": {{userId}},
+    "job_posting_id": {{jobPostingId}},
+    "status": "open",
+    "applied_at": "2026-07-01",
+    "note": "Beworben über die Firmen-Website"
+  }
+}
+
+script:post-response {
+  if (res.body && res.body.id) {
+    bru.setVar("applicationId", res.body.id);
+  }
+}

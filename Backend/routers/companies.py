@@ -28,7 +28,10 @@ def get_company(company_id: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=CompanyRead, status_code=status.HTTP_201_CREATED)
 def create_company(payload: CompanyCreate, db: Session = Depends(get_db)):
     """Legt ein neues Unternehmen an."""
-    company = Company(**payload.model_dump())
+    data = payload.model_dump()
+    if data["homepage"] is not None:
+        data["homepage"] = str(data["homepage"])
+    company = Company(**data)
     db.add(company)
     db.commit()
     db.refresh(company)
@@ -41,7 +44,10 @@ def update_company(company_id: int, payload: CompanyUpdate, db: Session = Depend
     company = db.query(Company).filter(Company.id == company_id).first()
     if not company:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found")
-    for field, value in payload.model_dump(exclude_unset=True).items():
+    data = payload.model_dump(exclude_unset=True)
+    if data.get("homepage") is not None:
+        data["homepage"] = str(data["homepage"])
+    for field, value in data.items():
         setattr(company, field, value)
     db.commit()
     db.refresh(company)
