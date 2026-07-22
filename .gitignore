@@ -11,3 +11,11 @@ Thumbs.db
 
 # Environment files (enthalten Zugangsdaten, z.B. DATABASE_URL)
 .env
+
+# Terraform
+terraform/**/.terraform/
+terraform/**/*.tfstate
+terraform/**/*.tfstate.*
+terraform/**/terraform.tfvars
+terraform/**/terrform.tfvars
+terraform/**/*.tfplan
