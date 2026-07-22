@@ -1,0 +1,11 @@
+meta {
+  name: Get Job Posting
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/job-postings/{{jobPostingId}}
+  body: none
+  auth: none
+}

@@ -1,0 +1,21 @@
+meta {
+  name: Update Application
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/applications/{{applicationId}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "status": "in_progress"
+  }
+}

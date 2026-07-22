@@ -1,0 +1,11 @@
+meta {
+  name: Delete Job Posting
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/job-postings/{{jobPostingId}}
+  body: none
+  auth: none
+}
