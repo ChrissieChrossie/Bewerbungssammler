@@ -6,12 +6,13 @@ import Modal from '../components/Modal'
 import FormInput from '../components/FormInput'
 import FormSelect from '../components/FormSelect'
 import StatusBadge from '../components/StatusBadge'
-import { applicationApi, companyApi, jobPostingApi } from '../api/client'
+import { applicationApi, companyApi, jobPostingApi, userApi } from '../api/client'
 
 export default function ApplicationsPage() {
   const [applications, setApplications] = useState([])
   const [companies, setCompanies] = useState([])
   const [jobPostings, setJobPostings] = useState([])
+  const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
@@ -21,11 +22,11 @@ export default function ApplicationsPage() {
   const [searchTerm, setSearchTerm] = useState('')
 
   const [formData, setFormData] = useState({
-    company_id: '',
+    user_id: '',
     job_posting_id: '',
-    application_date: new Date().toISOString().split('T')[0],
+    applied_at: new Date().toISOString().split('T')[0],
     status: 'open',
-    notes: ''
+    note: ''
   })
 
   const [formErrors, setFormErrors] = useState({})
@@ -38,14 +39,16 @@ export default function ApplicationsPage() {
     try {
       setLoading(true)
       setError(null)
-      const [appsRes, companiesRes, jobsRes] = await Promise.all([
+      const [appsRes, companiesRes, jobsRes, usersRes] = await Promise.all([
         applicationApi.getAll(),
         companyApi.getAll(),
-        jobPostingApi.getAll()
+        jobPostingApi.getAll(),
+        userApi.getAll()
       ])
       setApplications(appsRes.data || [])
       setCompanies(companiesRes.data || [])
       setJobPostings(jobsRes.data || [])
+      setUsers(usersRes.data || [])
     } catch (err) {
       setError(err.response?.data?.detail || 'Fehler beim Laden der Daten')
     } finally {
@@ -55,9 +58,9 @@ export default function ApplicationsPage() {
 
   const validateForm = () => {
     const errors = {}
-    if (!formData.company_id) errors.company_id = 'Unternehmen ist erforderlich'
+    if (!formData.user_id) errors.user_id = 'Bewerber ist erforderlich'
     if (!formData.job_posting_id) errors.job_posting_id = 'Stellenausschreibung ist erforderlich'
-    if (!formData.application_date) errors.application_date = 'Bewerbungsdatum ist erforderlich'
+    if (!formData.applied_at) errors.applied_at = 'Bewerbungsdatum ist erforderlich'
     if (!formData.status) errors.status = 'Status ist erforderlich'
     setFormErrors(errors)
     return Object.keys(errors).length === 0
@@ -87,20 +90,20 @@ export default function ApplicationsPage() {
     if (app) {
       setEditingId(app.id)
       setFormData({
-        company_id: app.company_id?.toString() || '',
+        user_id: app.user_id?.toString() || '',
         job_posting_id: app.job_posting_id?.toString() || '',
-        application_date: app.application_date || '',
+        applied_at: app.applied_at || '',
         status: app.status || 'open',
-        notes: app.notes || ''
+        note: app.note || ''
       })
     } else {
       setEditingId(null)
       setFormData({
-        company_id: '',
+        user_id: '',
         job_posting_id: '',
-        application_date: new Date().toISOString().split('T')[0],
+        applied_at: new Date().toISOString().split('T')[0],
         status: 'open',
-        notes: ''
+        note: ''
       })
     }
     setFormErrors({})
@@ -124,12 +127,18 @@ export default function ApplicationsPage() {
     }
   }
 
-  const getCompanyName = (id) => {
-    return companies.find(c => c.id === id)?.name || 'Unbekannt'
+  const getJobPosting = (id) => jobPostings.find(j => j.id === id)
+
+  const getJobTitle = (id) => getJobPosting(id)?.title || 'Unbekannt'
+
+  const getCompanyNameForJobPosting = (jobPostingId) => {
+    const posting = getJobPosting(jobPostingId)
+    if (!posting) return 'Unbekannt'
+    return companies.find(c => c.id === posting.company_id)?.name || 'Unbekannt'
   }
 
-  const getJobTitle = (id) => {
-    return jobPostings.find(j => j.id === id)?.title || 'Unbekannt'
+  const getUserName = (id) => {
+    return users.find(u => u.id === id)?.name || 'Unbekannt'
   }
 
   let filteredApplications = applications
@@ -139,7 +148,7 @@ export default function ApplicationsPage() {
   if (searchTerm) {
     const search = searchTerm.toLowerCase()
     filteredApplications = filteredApplications.filter(a =>
-      getCompanyName(a.company_id).toLowerCase().includes(search) ||
+      getCompanyNameForJobPosting(a.job_posting_id).toLowerCase().includes(search) ||
       getJobTitle(a.job_posting_id).toLowerCase().includes(search)
     )
   }
@@ -183,7 +192,6 @@ export default function ApplicationsPage() {
             <option value="invited">Eingeladen</option>
             <option value="rejected">Abgelehnt</option>
             <option value="accepted">Angenommen</option>
-            <option value="withdrawn">Zurückgezogen</option>
           </select>
         </div>
       </div>
@@ -205,9 +213,10 @@ export default function ApplicationsPage() {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900">{getJobTitle(app.job_posting_id)}</h3>
-                  <p className="text-sm text-gray-600 mt-1">🏢 {getCompanyName(app.company_id)}</p>
-                  <p className="text-xs text-gray-500 mt-1">📅 {new Date(app.application_date).toLocaleDateString('de-DE')}</p>
-                  {app.notes && <p className="text-sm text-gray-700 mt-2">📝 {app.notes}</p>}
+                  <p className="text-sm text-gray-600 mt-1">🏢 {getCompanyNameForJobPosting(app.job_posting_id)}</p>
+                  <p className="text-xs text-gray-500 mt-1">👤 {getUserName(app.user_id)}</p>
+                  <p className="text-xs text-gray-500 mt-1">📅 {app.applied_at ? new Date(app.applied_at).toLocaleDateString('de-DE') : 'Unbekannt'}</p>
+                  {app.note && <p className="text-sm text-gray-700 mt-2">📝 {app.note}</p>}
                 </div>
                 <div className="flex flex-col sm:items-end gap-3">
                   <StatusBadge status={app.status} />
@@ -240,11 +249,11 @@ export default function ApplicationsPage() {
       >
         <form onSubmit={handleSubmit}>
           <FormSelect
-            label="Unternehmen"
-            value={formData.company_id}
-            onChange={e => setFormData({ ...formData, company_id: e.target.value })}
-            options={companies.map(c => ({ value: c.id, label: c.name }))}
-            error={formErrors.company_id}
+            label="Bewerber"
+            value={formData.user_id}
+            onChange={e => setFormData({ ...formData, user_id: e.target.value })}
+            options={users.map(u => ({ value: u.id, label: u.name }))}
+            error={formErrors.user_id}
             required
           />
 
@@ -260,9 +269,9 @@ export default function ApplicationsPage() {
           <FormInput
             label="Bewerbungsdatum"
             type="date"
-            value={formData.application_date}
-            onChange={e => setFormData({ ...formData, application_date: e.target.value })}
-            error={formErrors.application_date}
+            value={formData.applied_at}
+            onChange={e => setFormData({ ...formData, applied_at: e.target.value })}
+            error={formErrors.applied_at}
             required
           />
 
@@ -275,8 +284,7 @@ export default function ApplicationsPage() {
               { value: 'in_progress', label: 'In Bearbeitung' },
               { value: 'invited', label: 'Eingeladen' },
               { value: 'rejected', label: 'Abgelehnt' },
-              { value: 'accepted', label: 'Angenommen' },
-              { value: 'withdrawn', label: 'Zurückgezogen' }
+              { value: 'accepted', label: 'Angenommen' }
             ]}
             error={formErrors.status}
             required
@@ -285,8 +293,8 @@ export default function ApplicationsPage() {
           <div className="form-group">
             <label className="label">Notizen</label>
             <textarea
-              value={formData.notes}
-              onChange={e => setFormData({ ...formData, notes: e.target.value })}
+              value={formData.note}
+              onChange={e => setFormData({ ...formData, note: e.target.value })}
               placeholder="Weitere Informationen zur Bewerbung..."
               className="input min-h-24"
             />

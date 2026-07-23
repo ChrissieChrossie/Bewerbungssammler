@@ -13,18 +13,23 @@ Alles ganz normales CRUD über eine FastAPI-REST-API, nichts Wildes. Die Daten l
 
 ## Schnellstart
 
-Der bequeme Weg, ganz ohne AWS-Account, IAM-Rollen oder sonstigen Ärger:
+Der bequeme Weg, ganz ohne AWS-Account, IAM-Rollen oder sonstigen Ärger – ein einziger Befehl startet Datenbank, Backend und Frontend zusammen:
 
 ```bash
 docker compose up --build
 ```
 
-Danach läuft die API auf `http://localhost:8000`, die interaktive Doku gibt's automatisch unter `http://localhost:8000/docs`.
+Danach läuft:
+
+- das **Frontend** auf `http://localhost:5173`
+- die **API** auf `http://localhost:8000` (Endpunkte unter `/api/...`), die interaktive Doku gibt's automatisch unter `http://localhost:8000/docs`
 
 Für manuelles Rumklicken statt Swagger UI liegt außerdem eine fertige [Bruno](https://www.usebruno.com/)-Collection unter `bruno/` bereit – Collection öffnen, Environment „Local" auswählen, loslegen. Die Create-Requests merken sich die erzeugten IDs automatisch, sodass Get/Update/Delete direkt danach funktionieren.
 
+Mehr Details zum Frontend (Projektstruktur, Entwicklung ohne Docker etc.) stehen in [`frontend/README.md`](frontend/README.md).
+
 ## Tech-Stack
 
-FastAPI, SQLAlchemy, Pydantic, PostgreSQL (bzw. SQLite für den bequemen lokalen Fall), Docker für die lokale Entwicklung, Terraform für die "richtige" Infrastruktur in AWS.
+FastAPI, SQLAlchemy, Pydantic, PostgreSQL (bzw. SQLite für den bequemen lokalen Fall), React + Vite + Tailwind fürs Frontend, Docker für die lokale Entwicklung, Terraform für die "richtige" Infrastruktur in AWS.
 
 ##TODO Terraform
