@@ -20,10 +20,8 @@ export default function JobPostingsPage() {
   const [formData, setFormData] = useState({
     title: '',
     company_id: '',
-    description: '',
-    location: '',
-    salary_range: '',
-    job_url: ''
+    posted_at: new Date().toISOString().split('T')[0],
+    link: ''
   })
 
   const [formErrors, setFormErrors] = useState({})
@@ -64,7 +62,9 @@ export default function JobPostingsPage() {
     try {
       const payload = {
         ...formData,
-        company_id: parseInt(formData.company_id)
+        company_id: parseInt(formData.company_id),
+        posted_at: formData.posted_at || null,
+        link: formData.link || null
       }
       if (editingId) {
         await jobPostingApi.update(editingId, payload)
@@ -87,20 +87,16 @@ export default function JobPostingsPage() {
       setFormData({
         title: posting.title || '',
         company_id: posting.company_id?.toString() || '',
-        description: posting.description || '',
-        location: posting.location || '',
-        salary_range: posting.salary_range || '',
-        job_url: posting.job_url || ''
+        posted_at: posting.posted_at || '',
+        link: posting.link || ''
       })
     } else {
       setEditingId(null)
       setFormData({
         title: '',
         company_id: '',
-        description: '',
-        location: '',
-        salary_range: '',
-        job_url: ''
+        posted_at: new Date().toISOString().split('T')[0],
+        link: ''
       })
     }
     setFormErrors({})
@@ -133,8 +129,7 @@ export default function JobPostingsPage() {
     const search = searchTerm.toLowerCase()
     filteredJobPostings = filteredJobPostings.filter(j =>
       j.title.toLowerCase().includes(search) ||
-      getCompanyName(j.company_id).toLowerCase().includes(search) ||
-      j.location?.toLowerCase().includes(search)
+      getCompanyName(j.company_id).toLowerCase().includes(search)
     )
   }
 
@@ -144,7 +139,7 @@ export default function JobPostingsPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Stellenausschreibungen</h2>
+          <h2 className="text-4xl font-black tracking-tight bg-gradient-to-r from-violet-700 to-fuchsia-600 bg-clip-text text-transparent">Stellenausschreibungen</h2>
           <p className="text-gray-600 mt-1">Verwalte offene Positionen</p>
         </div>
         <button onClick={() => openModal()} className="btn btn-primary">
@@ -158,7 +153,7 @@ export default function JobPostingsPage() {
       <div className="card-lg mb-6">
         <input
           type="text"
-          placeholder="Suche nach Jobtitel, Unternehmen oder Ort..."
+          placeholder="Suche nach Jobtitel oder Unternehmen..."
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
           className="input"
@@ -166,7 +161,8 @@ export default function JobPostingsPage() {
       </div>
 
       {filteredJobPostings.length === 0 ? (
-        <div className="card-lg text-center py-12">
+        <div className="card-lg text-center py-16">
+          <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-violet-100 to-fuchsia-100 flex items-center justify-center text-3xl mb-4">💼</div>
           <p className="text-gray-600 text-lg">Noch keine Stellenausschreibungen vorhanden</p>
           <button
             onClick={() => openModal()}
@@ -183,24 +179,15 @@ export default function JobPostingsPage() {
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900 text-lg">{posting.title}</h3>
                   <p className="text-sm text-gray-600 mt-1">🏢 {getCompanyName(posting.company_id)}</p>
-                  {posting.location && (
-                    <p className="text-sm text-gray-600">📍 {posting.location}</p>
+                  {posting.posted_at && (
+                    <p className="text-sm text-gray-600">📅 {new Date(posting.posted_at).toLocaleDateString('de-DE')}</p>
                   )}
-                  {posting.salary_range && (
-                    <p className="text-sm text-gray-600">💰 {posting.salary_range}</p>
-                  )}
-                  {posting.description && (
-                    <p className="text-sm text-gray-700 mt-3 p-3 bg-gray-50 rounded">
-                      {posting.description.substring(0, 150)}
-                      {posting.description.length > 150 ? '...' : ''}
-                    </p>
-                  )}
-                  {posting.job_url && (
+                  {posting.link && (
                     <a
-                      href={posting.job_url}
+                      href={posting.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-blue-600 hover:underline mt-2 block"
+                      className="text-sm text-violet-600 hover:underline mt-2 block"
                     >
                       🔗 Zur Ausschreibung
                     </a>
@@ -252,36 +239,19 @@ export default function JobPostingsPage() {
           />
 
           <FormInput
-            label="Standort"
-            value={formData.location}
-            onChange={e => setFormData({ ...formData, location: e.target.value })}
-            placeholder="z.B. Berlin, Remote"
-          />
-
-          <FormInput
-            label="Gehaltsbereich"
-            value={formData.salary_range}
-            onChange={e => setFormData({ ...formData, salary_range: e.target.value })}
-            placeholder="z.B. 50.000 - 60.000 EUR"
+            label="Veröffentlicht am"
+            type="date"
+            value={formData.posted_at}
+            onChange={e => setFormData({ ...formData, posted_at: e.target.value })}
           />
 
           <FormInput
             label="Jobangebot URL"
             type="url"
-            value={formData.job_url}
-            onChange={e => setFormData({ ...formData, job_url: e.target.value })}
+            value={formData.link}
+            onChange={e => setFormData({ ...formData, link: e.target.value })}
             placeholder="https://..."
           />
-
-          <div className="form-group">
-            <label className="label">Beschreibung</label>
-            <textarea
-              value={formData.description}
-              onChange={e => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Stellenbeschreibung und Anforderungen..."
-              className="input min-h-24"
-            />
-          </div>
 
           <div className="flex gap-2 justify-end pt-4 border-t">
             <button type="button" onClick={closeModal} className="btn btn-secondary">

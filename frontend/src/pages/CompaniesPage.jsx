@@ -17,9 +17,7 @@ export default function CompaniesPage() {
 
   const [formData, setFormData] = useState({
     name: '',
-    website: '',
-    industry: '',
-    notes: ''
+    homepage: ''
   })
 
   const [formErrors, setFormErrors] = useState({})
@@ -53,11 +51,12 @@ export default function CompaniesPage() {
     if (!validateForm()) return
 
     try {
+      const payload = { ...formData, homepage: formData.homepage || null }
       if (editingId) {
-        await companyApi.update(editingId, formData)
+        await companyApi.update(editingId, payload)
         setSuccess('Unternehmen aktualisiert!')
       } else {
-        await companyApi.create(formData)
+        await companyApi.create(payload)
         setSuccess('Unternehmen erstellt!')
       }
       closeModal()
@@ -73,17 +72,13 @@ export default function CompaniesPage() {
       setEditingId(company.id)
       setFormData({
         name: company.name || '',
-        website: company.website || '',
-        industry: company.industry || '',
-        notes: company.notes || ''
+        homepage: company.homepage || ''
       })
     } else {
       setEditingId(null)
       setFormData({
         name: '',
-        website: '',
-        industry: '',
-        notes: ''
+        homepage: ''
       })
     }
     setFormErrors({})
@@ -111,8 +106,7 @@ export default function CompaniesPage() {
   if (searchTerm) {
     const search = searchTerm.toLowerCase()
     filteredCompanies = filteredCompanies.filter(c =>
-      c.name.toLowerCase().includes(search) ||
-      c.industry?.toLowerCase().includes(search)
+      c.name.toLowerCase().includes(search)
     )
   }
 
@@ -122,7 +116,7 @@ export default function CompaniesPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Unternehmen</h2>
+          <h2 className="text-4xl font-black tracking-tight bg-gradient-to-r from-violet-700 to-fuchsia-600 bg-clip-text text-transparent">Unternehmen</h2>
           <p className="text-gray-600 mt-1">Verwalte Unternehmen und Kontakte</p>
         </div>
         <button onClick={() => openModal()} className="btn btn-primary">
@@ -144,7 +138,8 @@ export default function CompaniesPage() {
       </div>
 
       {filteredCompanies.length === 0 ? (
-        <div className="card-lg text-center py-12">
+        <div className="card-lg text-center py-16">
+          <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-violet-100 to-fuchsia-100 flex items-center justify-center text-3xl mb-4">🏢</div>
           <p className="text-gray-600 text-lg">Noch keine Unternehmen vorhanden</p>
           <button
             onClick={() => openModal()}
@@ -158,23 +153,15 @@ export default function CompaniesPage() {
           {filteredCompanies.map(company => (
             <div key={company.id} className="card p-4">
               <h3 className="font-semibold text-gray-900 text-lg">{company.name}</h3>
-              {company.industry && (
-                <p className="text-sm text-gray-600 mt-1">💼 {company.industry}</p>
-              )}
-              {company.website && (
+              {company.homepage && (
                 <a
-                  href={company.website}
+                  href={company.homepage}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:underline mt-1 block"
+                  className="text-sm text-violet-600 hover:underline mt-1 block"
                 >
-                  🌐 {company.website}
+                  🌐 {company.homepage}
                 </a>
-              )}
-              {company.notes && (
-                <p className="text-sm text-gray-700 mt-3 p-2 bg-gray-50 rounded">
-                  {company.notes}
-                </p>
               )}
               <div className="flex gap-2 mt-4">
                 <button
@@ -213,27 +200,10 @@ export default function CompaniesPage() {
           <FormInput
             label="Webseite"
             type="url"
-            value={formData.website}
-            onChange={e => setFormData({ ...formData, website: e.target.value })}
+            value={formData.homepage}
+            onChange={e => setFormData({ ...formData, homepage: e.target.value })}
             placeholder="https://beispiel.de"
           />
-
-          <FormInput
-            label="Branche"
-            value={formData.industry}
-            onChange={e => setFormData({ ...formData, industry: e.target.value })}
-            placeholder="z.B. Technologie"
-          />
-
-          <div className="form-group">
-            <label className="label">Notizen</label>
-            <textarea
-              value={formData.notes}
-              onChange={e => setFormData({ ...formData, notes: e.target.value })}
-              placeholder="Weitere Informationen..."
-              className="input min-h-20"
-            />
-          </div>
 
           <div className="flex gap-2 justify-end pt-4 border-t">
             <button type="button" onClick={closeModal} className="btn btn-secondary">
