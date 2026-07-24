@@ -10,33 +10,33 @@ const client = axios.create({
 })
 
 export const applicationApi = {
-  getAll: () => client.get('/applications'),
+  getAll: () => client.get('/applications/'),
   getById: (id) => client.get(`/applications/${id}`),
-  create: (data) => client.post('/applications', data),
+  create: (data) => client.post('/applications/', data),
   update: (id, data) => client.put(`/applications/${id}`, data),
   delete: (id) => client.delete(`/applications/${id}`)
 }
 
 export const companyApi = {
-  getAll: () => client.get('/companies'),
+  getAll: () => client.get('/companies/'),
   getById: (id) => client.get(`/companies/${id}`),
-  create: (data) => client.post('/companies', data),
+  create: (data) => client.post('/companies/', data),
   update: (id, data) => client.put(`/companies/${id}`, data),
   delete: (id) => client.delete(`/companies/${id}`)
 }
 
 export const jobPostingApi = {
-  getAll: () => client.get('/job-postings'),
+  getAll: () => client.get('/job-postings/'),
   getById: (id) => client.get(`/job-postings/${id}`),
-  create: (data) => client.post('/job-postings', data),
+  create: (data) => client.post('/job-postings/', data),
   update: (id, data) => client.put(`/job-postings/${id}`, data),
   delete: (id) => client.delete(`/job-postings/${id}`)
 }
 
 export const userApi = {
-  getAll: () => client.get('/users'),
+  getAll: () => client.get('/users/'),
   getById: (id) => client.get(`/users/${id}`),
-  create: (data) => client.post('/users', data),
+  create: (data) => client.post('/users/', data),
   update: (id, data) => client.put(`/users/${id}`, data),
   delete: (id) => client.delete(`/users/${id}`)
 }
