@@ -19,30 +19,32 @@ Ein modernes React + Tailwind CSS Frontend für die Verwaltung von Bewerbungen, 
 - **Axios**: HTTP Client für API-Calls
 - **ESLint**: Code Quality
 
-## 📦 Installation
-
-```bash
-cd frontend
-npm install
-```
-
 ## 🎯 Quick Start
 
-### Terminal 1: Backend starten
-```bash
-docker-compose up --build
-```
+Frontend, Backend und Datenbank laufen zusammen über Docker Compose – ein Befehl im Projekt-Root reicht:
 
-### Terminal 2: Frontend starten
 ```bash
-cd frontend
-npm run dev
+docker compose up --build
 ```
 
 ### Browser öffnen
 ```
 http://localhost:5173
 ```
+
+Änderungen an Dateien in `frontend/src` werden dank Volume-Mount + Hot Module Reload sofort im Container übernommen, ein Neubau ist dafür nicht nötig.
+
+## 📦 Alternative: Frontend ohne Docker
+
+Falls du nur am Frontend arbeitest und das Backend separat (z.B. via Docker) läuft:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Läuft dann ebenfalls auf `http://localhost:5173`, der Dev-Server proxyt `/api`-Requests standardmäßig an `http://localhost:8000`.
 
 ## 📁 Projektstruktur
 
