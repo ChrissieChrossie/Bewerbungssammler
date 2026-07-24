@@ -12,4 +12,10 @@ module.exports = {
   rules: {
     'react/prop-types': 'warn',
   },
+  overrides: [
+    {
+      files: ['*.config.js'],
+      env: { node: true },
+    },
+  ],
 }
