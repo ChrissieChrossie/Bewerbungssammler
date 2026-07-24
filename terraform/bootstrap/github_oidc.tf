@@ -105,6 +105,130 @@ resource "aws_iam_role_policy" "github_actions" {
           "ec2:DescribeTags",
         ]
         Resource = "*"
+      },
+      {
+        Sid    = "EcrManagement"
+        Effect = "Allow"
+        Action = [
+          "ecr:CreateRepository",
+          "ecr:DeleteRepository",
+          "ecr:DescribeRepositories",
+          "ecr:PutLifecyclePolicy",
+          "ecr:GetLifecyclePolicy",
+          "ecr:SetRepositoryPolicy",
+          "ecr:TagResource",
+          "ecr:ListTagsForResource",
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "EcrPushPull"
+        Effect = "Allow"
+        Action = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:PutImage",
+          "ecr:InitiateLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          "ecr:BatchGetImage",
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "AppRunnerManagement"
+        Effect = "Allow"
+        Action = [
+          "apprunner:CreateService",
+          "apprunner:DeleteService",
+          "apprunner:UpdateService",
+          "apprunner:DescribeService",
+          "apprunner:ListServices",
+          "apprunner:StartDeployment",
+          "apprunner:TagResource",
+          "apprunner:UntagResource",
+          "apprunner:ListTagsForResource",
+          "apprunner:CreateVpcConnector",
+          "apprunner:DeleteVpcConnector",
+          "apprunner:DescribeVpcConnector",
+          "apprunner:ListVpcConnectors",
+        ]
+        Resource = "*"
+      },
+      {
+        # Eng gescopt auf die App-Runner-Rolle(n) dieses Projekts - niemals "*", damit
+        # GitHub Actions nicht beliebige IAM-Rollen an beliebige Services übergeben kann.
+        Sid    = "IamForAppRunnerRole"
+        Effect = "Allow"
+        Action = [
+          "iam:CreateRole",
+          "iam:DeleteRole",
+          "iam:GetRole",
+          "iam:TagRole",
+          "iam:AttachRolePolicy",
+          "iam:DetachRolePolicy",
+          "iam:PassRole",
+        ]
+        Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.project_name}-apprunner-*"
+      },
+      {
+        # Falls App Runner beim ersten Einsatz im Account noch keine Service-Linked-Role hat.
+        Sid      = "AppRunnerServiceLinkedRole"
+        Effect   = "Allow"
+        Action   = ["iam:CreateServiceLinkedRole"]
+        Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/apprunner.amazonaws.com/*"
+        Condition = {
+          StringEquals = {
+            "iam:AWSServiceName" = "apprunner.amazonaws.com"
+          }
+        }
+      },
+      {
+        Sid    = "S3FrontendBucketManagement"
+        Effect = "Allow"
+        Action = [
+          "s3:CreateBucket",
+          "s3:PutBucketPolicy",
+          "s3:DeleteBucketPolicy",
+          "s3:GetBucketPolicy",
+          "s3:PutBucketPublicAccessBlock",
+          "s3:PutBucketOwnershipControls",
+          "s3:PutBucketVersioning",
+          "s3:PutBucketTagging",
+        ]
+        Resource = "arn:aws:s3:::${var.project_name}-frontend-${data.aws_caller_identity.current.account_id}"
+      },
+      {
+        Sid    = "S3FrontendObjectSync"
+        Effect = "Allow"
+        Action = [
+          "s3:ListBucket",
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+        ]
+        Resource = [
+          "arn:aws:s3:::${var.project_name}-frontend-${data.aws_caller_identity.current.account_id}",
+          "arn:aws:s3:::${var.project_name}-frontend-${data.aws_caller_identity.current.account_id}/*",
+        ]
+      },
+      {
+        Sid    = "CloudFrontManagement"
+        Effect = "Allow"
+        Action = [
+          "cloudfront:CreateDistribution",
+          "cloudfront:GetDistribution",
+          "cloudfront:UpdateDistribution",
+          "cloudfront:DeleteDistribution",
+          "cloudfront:CreateOriginAccessControl",
+          "cloudfront:GetOriginAccessControl",
+          "cloudfront:DeleteOriginAccessControl",
+          "cloudfront:TagResource",
+          "cloudfront:ListTagsForResource",
+          "cloudfront:CreateInvalidation",
+          "cloudfront:GetInvalidation",
+        ]
+        Resource = "*"
       }
     ]
   })
