@@ -159,7 +159,7 @@ export default function ApplicationsPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Bewerbungen</h2>
+          <h2 className="text-4xl font-black tracking-tight bg-gradient-to-r from-violet-700 to-fuchsia-600 bg-clip-text text-transparent">Bewerbungen</h2>
           <p className="text-gray-600 mt-1">Verwalte alle deine Bewerbungen</p>
         </div>
         <button onClick={() => openModal()} className="btn btn-primary">
@@ -197,7 +197,8 @@ export default function ApplicationsPage() {
       </div>
 
       {filteredApplications.length === 0 ? (
-        <div className="card-lg text-center py-12">
+        <div className="card-lg text-center py-16">
+          <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-violet-100 to-fuchsia-100 flex items-center justify-center text-3xl mb-4">📋</div>
           <p className="text-gray-600 text-lg">Noch keine Bewerbungen vorhanden</p>
           <button
             onClick={() => openModal()}

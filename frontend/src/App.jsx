@@ -1,41 +1,33 @@
-import { useState } from 'react'
-import Header from './components/Header'
-import Navigation from './components/Navigation'
-import Dashboard from './pages/Dashboard'
-import ApplicationsPage from './pages/ApplicationsPage'
-import CompaniesPage from './pages/CompaniesPage'
-import JobPostingsPage from './pages/JobPostingsPage'
+import { Suspense, lazy } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import LoadingSpinner from './components/LoadingSpinner'
+import DashboardLayout from './layouts/DashboardLayout'
+
+const Landing = lazy(() => import('./pages/Landing'))
+const Login = lazy(() => import('./pages/Login'))
+const Signup = lazy(() => import('./pages/Signup'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const ApplicationsPage = lazy(() => import('./pages/ApplicationsPage'))
+const CompaniesPage = lazy(() => import('./pages/CompaniesPage'))
+const JobPostingsPage = lazy(() => import('./pages/JobPostingsPage'))
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState('dashboard')
-
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'dashboard':
-        return <Dashboard />
-      case 'applications':
-        return <ApplicationsPage />
-      case 'companies':
-        return <CompaniesPage />
-      case 'job-postings':
-        return <JobPostingsPage />
-      default:
-        return <Dashboard />
-    }
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
-      <Navigation currentPage={currentPage} setCurrentPage={setCurrentPage} />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {renderPage()}
-      </main>
-      <footer className="border-t border-gray-200 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm text-gray-600">
-          <p>&copy; 2026 Bewerbungssammler. Behalte den Überblick über deine Bewerbungen.</p>
-        </div>
-      </footer>
-    </div>
+    <Suspense fallback={<LoadingSpinner text="Wird geladen..." />}>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+
+        <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="applications" element={<ApplicationsPage />} />
+          <Route path="companies" element={<CompaniesPage />} />
+          <Route path="job-postings" element={<JobPostingsPage />} />
+        </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   )
 }

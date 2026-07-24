@@ -48,16 +48,16 @@ export default function Dashboard() {
   if (error) return <ErrorMessage message={error} onRetry={loadData} />
 
   const statCards = [
-    { label: 'Bewerbungen insgesamt', value: stats?.totalApplications || 0, icon: '📋', color: 'blue' },
-    { label: 'Unternehmen', value: stats?.totalCompanies || 0, icon: '🏢', color: 'purple' },
-    { label: 'Offen', value: stats?.statusCounts.open || 0, icon: '📝', color: 'yellow' },
-    { label: 'Einladungen', value: stats?.statusCounts.invited || 0, icon: '✉️', color: 'green' },
+    { label: 'Bewerbungen insgesamt', value: stats?.totalApplications || 0, icon: '📋', gradient: 'from-violet-500 to-fuchsia-500' },
+    { label: 'Unternehmen', value: stats?.totalCompanies || 0, icon: '🏢', gradient: 'from-indigo-500 to-violet-500' },
+    { label: 'Offen', value: stats?.statusCounts.open || 0, icon: '📝', gradient: 'from-amber-400 to-orange-500' },
+    { label: 'Einladungen', value: stats?.statusCounts.invited || 0, icon: '✉️', gradient: 'from-emerald-400 to-teal-500' },
   ]
 
   return (
     <div>
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Willkommen zurück! 👋</h2>
+        <h2 className="text-4xl font-black tracking-tight bg-gradient-to-r from-violet-700 to-fuchsia-600 bg-clip-text text-transparent mb-2">Willkommen zurück! 👋</h2>
         <p className="text-gray-600">Hier ist ein Überblick über deine Bewerbungen</p>
       </div>
 
@@ -69,7 +69,9 @@ export default function Dashboard() {
                 <p className="text-gray-600 text-sm font-medium">{card.label}</p>
                 <p className="text-3xl font-bold text-gray-900 mt-2">{card.value}</p>
               </div>
-              <div className="text-4xl">{card.icon}</div>
+              <div className={`flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br ${card.gradient} text-2xl shadow-md`}>
+                {card.icon}
+              </div>
             </div>
           </div>
         ))}
@@ -98,19 +100,19 @@ export default function Dashboard() {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">💡 Tipps & Tricks</h3>
           <ul className="space-y-3 text-sm text-gray-700">
             <li className="flex items-start">
-              <span className="text-blue-600 mr-3 font-bold">1.</span>
+              <span className="text-violet-600 mr-3 font-bold">1.</span>
               <span>Nutze die <strong>Bewerbungen</strong>-Seite um all deine Bewerbungen zu sehen und zu verwalten</span>
             </li>
             <li className="flex items-start">
-              <span className="text-blue-600 mr-3 font-bold">2.</span>
+              <span className="text-violet-600 mr-3 font-bold">2.</span>
               <span>Speichere <strong>Unternehmen</strong> zentral ab, um schneller neue Bewerbungen zu erstellen</span>
             </li>
             <li className="flex items-start">
-              <span className="text-blue-600 mr-3 font-bold">3.</span>
+              <span className="text-violet-600 mr-3 font-bold">3.</span>
               <span>Verwalte <strong>Stellenausschreibungen</strong> um den Überblick zu behalten</span>
             </li>
             <li className="flex items-start">
-              <span className="text-blue-600 mr-3 font-bold">4.</span>
+              <span className="text-violet-600 mr-3 font-bold">4.</span>
               <span>Nutze die Status um deine Bewerbungen zu kategorisieren</span>
             </li>
           </ul>
