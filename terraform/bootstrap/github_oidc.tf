@@ -60,7 +60,7 @@ resource "aws_iam_role_policy" "github_actions" {
       {
         Sid      = "TerraformStateBucketList"
         Effect   = "Allow"
-        Action   = ["s3:ListBucket"]
+        Action   = ["s3:ListBucket", "s3:ListBucketVersions"]
         Resource = aws_s3_bucket.tf_state.arn
       },
       {
@@ -68,6 +68,40 @@ resource "aws_iam_role_policy" "github_actions" {
         Effect   = "Allow"
         Action   = ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:DeleteItem"]
         Resource = aws_dynamodb_table.tf_lock.arn
+      },
+      {
+        # Nur für den "destroy-all"-Nuke-Job in terraform-manual.yml: räumt die
+        # Bootstrap-Ressourcen (State-Bucket, Lock-Table, sich selbst, OIDC-Provider)
+        # per rohem AWS-CLI ab, da deren Terraform-State bewusst nur lokal existiert.
+        Sid    = "NukeBootstrap"
+        Effect = "Allow"
+        Action = [
+          "s3:GetObjectVersion",
+          "s3:DeleteObjectVersion",
+          "s3:DeleteBucket",
+        ]
+        Resource = [
+          aws_s3_bucket.tf_state.arn,
+          "${aws_s3_bucket.tf_state.arn}/*",
+        ]
+      },
+      {
+        Sid      = "NukeBootstrapLockTable"
+        Effect   = "Allow"
+        Action   = ["dynamodb:DescribeTable", "dynamodb:DeleteTable"]
+        Resource = aws_dynamodb_table.tf_lock.arn
+      },
+      {
+        Sid      = "NukeBootstrapRole"
+        Effect   = "Allow"
+        Action   = ["iam:DeleteRolePolicy", "iam:DeleteRole"]
+        Resource = aws_iam_role.github_actions.arn
+      },
+      {
+        Sid      = "NukeBootstrapOidcProvider"
+        Effect   = "Allow"
+        Action   = ["iam:DeleteOpenIDConnectProvider"]
+        Resource = local.oidc_provider_arn
       },
       {
         Sid    = "RdsManagement"
