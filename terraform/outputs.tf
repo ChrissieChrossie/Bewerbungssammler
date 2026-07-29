@@ -65,3 +65,45 @@ output "automation_summary" {
     lambda_log_group    = aws_cloudwatch_log_group.automation_lambda.name
   }
 }
+
+# ============================================================================
+# AUTOMATION OUTPUTS
+# ============================================================================
+
+output "lambda_function_name" {
+  description = "Name der Lambda-Funktion für die Automation."
+  value       = aws_lambda_function.automation.function_name
+}
+
+output "lambda_log_group" {
+  description = "CloudWatch Log Group für Lambda-Logs (zum Debuggen)."
+  value       = aws_cloudwatch_log_group.automation_lambda.name
+}
+
+output "eventbridge_rule_schedule" {
+  description = "Schedule-Expression der EventBridge Rule (Cron-Format)."
+  value       = aws_cloudwatch_event_rule.daily_automation.schedule_expression
+}
+
+output "ses_sender_email" {
+  description = "Verifizierte Sender-Email in SES."
+  value       = aws_ses_email_identity.automation_sender.email
+}
+
+output "ses_recipient_email" {
+  description = "Verifizierte Empfänger-Email in SES (für Sandbox-Modus)."
+  value       = aws_ses_email_identity.automation_recipient.email
+}
+
+output "automation_summary" {
+  description = "Zusammenfassung der Automation-Konfiguration."
+  value = {
+    enabled            = var.automation_enabled
+    schedule_hour_utc  = var.automation_schedule_hour
+    days_open_critical = var.automation_days_open_critical
+    days_in_progress   = var.automation_days_in_progress_warning
+    sender_email       = aws_ses_email_identity.automation_sender.email
+    recipient_email    = aws_ses_email_identity.automation_recipient.email
+    lambda_log_group   = aws_cloudwatch_log_group.automation_lambda.name
+  }
+}

@@ -12,7 +12,7 @@
 # ============================================================================
 
 resource "aws_iam_role" "automation_lambda" {
-  name              = "${var.project_name}-automation-lambda-role"
+  name               = "${var.project_name}-automation-lambda-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -64,7 +64,7 @@ resource "aws_iam_role_policy" "automation_lambda" {
         Resource = "*"
       },
 
-      # VPC ENI Management: Lambda braucht das für RDS Zugriff
+      # VPC ENI Management: Lambda braucht das für RDS-Zugriff
       {
         Effect = "Allow"
         Action = [
@@ -103,7 +103,7 @@ resource "aws_lambda_function" "automation" {
   # Environment-Variablen
   environment {
     variables = {
-      DATABASE_URL                  = "postgresql://${var.db_username}:${var.db_password}@${aws_db_instance.this.endpoint}:${var.db_name}"
+      DATABASE_URL                  = "postgresql://${var.db_username}:${var.db_password}@${aws_db_instance.this.address}:5432/${var.db_name}"
       AUTOMATION_SENDER_EMAIL       = var.automation_sender_email
       AUTOMATION_RECIPIENT_EMAIL    = var.automation_recipient_email
       AUTOMATION_DAYS_OPEN_CRITICAL = var.automation_days_open_critical
@@ -111,10 +111,9 @@ resource "aws_lambda_function" "automation" {
     }
   }
 
-  # Logging
   logging_config {
-    log_group            = aws_cloudwatch_log_group.automation_lambda.name
-    log_format           = "JSON"
+    log_group  = aws_cloudwatch_log_group.automation_lambda.name
+    log_format = "JSON"
   }
 
   depends_on = [
@@ -155,15 +154,14 @@ resource "aws_cloudwatch_log_group" "automation_lambda" {
 }
 
 # ============================================================================
-# SECURITY GROUP: Erlaubt Lambda den Zugriff auf RDS
+# SECURITY GROUP: Erlaubt Lambda den Ausgehenden-Traffic (für RDS + SES)
 # ============================================================================
 
 resource "aws_security_group" "lambda" {
   name        = "${var.project_name}-lambda-sg"
-  description = "Erlaubt Lambda Zugriff auf RDS PostgreSQL"
+  description = "Erlaubt Lambda Zugriff auf RDS PostgreSQL und SES"
   vpc_id      = data.aws_vpc.default.id
 
-  # Egress: Lambda darf alles nach außen senden (für SES, RDS, etc.)
   egress {
     from_port   = 0
     to_port     = 0
@@ -176,23 +174,3 @@ resource "aws_security_group" "lambda" {
     Purpose = "Lambda Automation Security Group"
   }
 }
-
-# ============================================================================
-# SECURITY GROUP RULE: RDS erlaubt eingehend von Lambda
-# ============================================================================
-
-resource "aws_security_group_rule" "db_allow_lambda" {
-  type                     = "ingress"
-  from_port                = 5432
-  to_port                  = 5432
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.lambda.id
-  security_group_id        = aws_security_group.db.id
-  description              = "Erlaubt Lambda Zugriff auf RDS"
-}
-
-# ============================================================================
-# DATA SOURCES: Für Netzwerk-Info
-# ============================================================================
-
-data "aws_caller_identity" "current" {}

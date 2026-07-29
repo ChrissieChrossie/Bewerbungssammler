@@ -5,9 +5,10 @@ Diese Funktion kann standalone laufen (z.B. in Lambda) und benötigt nur
 Zugriff auf die RDS-Datenbank via DATABASE_URL Umgebungsvariable.
 """
 
-from datetime import date, timedelta
+import os
+from datetime import date
 from typing import Dict, List
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from database import SessionLocal
 from models.application import Application, ApplicationStatus
@@ -16,9 +17,9 @@ from models.company import Company
 from models.job_posting import JobPosting
 
 
-# Konfigurierbare Schwellwerte (in Tagen)
-DAYS_OPEN_CRITICAL = 7  # Nach X Tagen OPEN = wahrscheinlich Ablehnung
-DAYS_IN_PROGRESS_WARNING = 14  # Nach X Tagen IN_PROGRESS = Nachfassen nötig
+# Konfigurierbare Schwellwerte: aus Env-Vars oder Defaults
+DAYS_OPEN_CRITICAL = int(os.getenv("AUTOMATION_DAYS_OPEN_CRITICAL", 7))
+DAYS_IN_PROGRESS_WARNING = int(os.getenv("AUTOMATION_DAYS_IN_PROGRESS", 14))
 
 
 class ApplicationProblem:
@@ -116,7 +117,8 @@ def check_applications(db: Session | None = None) -> Dict[str, List[ApplicationP
                 )
             )
             .options(
-                # Eager Loading: Relationships mitladen um N+1 Queries zu vermeiden
+                joinedload(Application.user),
+                joinedload(Application.job_posting).joinedload(JobPosting.company),
             )
             .all()
         )
