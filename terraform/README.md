@@ -106,7 +106,27 @@ alle weiteren Deploys automatisch bei Push auf `main`.
   kommentiert das Ergebnis in den PR. Kann auch manuell über
   *Actions → Terraform → Run workflow* mit Aktion `plan` gestartet werden.
 - **Terraform Apply:** *Actions → Terraform → Run workflow* mit Aktion `apply` –
-  wartet wegen des `production`-Environments auf deine Bestätigung.
+  wartet wegen des `production`-Environments auf deine Bestätigung. Gleiche Aktion
+  gibt es auch als *Actions → Terraform Manual (Apply/Destroy) → Run workflow*.
+- **Terraform Destroy:** *Actions → Terraform Manual (Apply/Destroy) → Run workflow*
+  mit Aktion `destroy` – räumt den Haupt-Stack (RDS, ECR, App Runner, S3, CloudFront)
+  ab. `aws_ecr_repository.backend` (`force_delete`) und `aws_s3_bucket.frontend`
+  (`force_destroy`) sind bewusst so konfiguriert, dass der Destroy auch mit noch
+  vorhandenen Images/Objekten sauber durchläuft, ohne dass man vorher manuell etwas
+  leeren muss. Der Bootstrap-Teil (State-Bucket, Lock-Table, OIDC-Rolle) bleibt dabei
+  unangetastet.
+- **Terraform Destroy All (⚠️ nicht umkehrbar):** *Actions → Terraform Manual
+  (Apply/Destroy) → Run workflow* mit Aktion `destroy-all` und
+  `confirm_nuke = NUKE BOOTSTRAP`. Macht zusätzlich zum normalen Destroy auch den
+  Bootstrap platt: State-Bucket (inkl. aller Versionen), Lock-Table, den
+  OIDC-Provider und am Ende die eigene IAM-Rolle, mit der der Workflow gerade läuft
+  (Self-Destruct – funktioniert, weil die einmal geholte AWS-Session bis zum Ablauf
+  gültig bleibt). Danach hat GitHub Actions keinen AWS-Zugriff mehr; Abschnitt 1
+  (Bootstrapping) muss komplett neu lokal durchlaufen und alle Repo-Variablen/Secrets
+  aus Abschnitt 2 neu eingetragen werden. Voraussetzung: die IAM-Policy in
+  `bootstrap/github_oidc.tf` muss die `Nuke*`-Statements enthalten – falls die Rolle
+  noch mit einer älteren Policy-Version läuft, erst `cd bootstrap && terraform apply`
+  lokal ausführen, um die Rechte zu aktualisieren.
 - **Deploy Backend:** läuft automatisch bei Push auf `main` mit Änderungen unter
   `Backend/**` – baut das Image, pusht es nach ECR und startet ein neues
   App-Runner-Deployment.
@@ -141,7 +161,14 @@ automatisch in der RDS-Datenbank angelegt.
 
 ## Aufräumen
 
+Lokal:
+
 ```bash
 terraform destroy                    # Haupt-Ressourcen (RDS etc.)
 cd bootstrap && terraform destroy    # Bootstrap-Ressourcen (State-Bucket etc.)
 ```
+
+Über GitHub Actions: siehe `destroy` bzw. `destroy-all` in Abschnitt 4. `destroy-all`
+ist das CI-Äquivalent zu den beiden Befehlen oben zusammen, nur ohne lokalen
+Bootstrap-State (räumt die Bootstrap-Ressourcen per rohem AWS-CLI ab, nicht per
+`terraform destroy`) – und ist entsprechend nicht umkehrbar.
