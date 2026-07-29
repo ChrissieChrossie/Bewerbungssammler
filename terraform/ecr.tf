@@ -3,6 +3,9 @@ resource "aws_ecr_repository" "backend" {
   name                 = "${var.project_name}-backend"
   image_tag_mutability = "MUTABLE"
 
+  # Ohne das schlägt "terraform destroy" fehl, solange noch Images im Repo liegen.
+  force_delete = true
+
   image_scanning_configuration {
     scan_on_push = true
   }

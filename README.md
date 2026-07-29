@@ -32,4 +32,11 @@ Mehr Details zum Frontend (Projektstruktur, Entwicklung ohne Docker etc.) stehen
 
 FastAPI, SQLAlchemy, Pydantic, PostgreSQL (bzw. SQLite für den bequemen lokalen Fall), React + Vite + Tailwind fürs Frontend, Docker für die lokale Entwicklung, Terraform für die "richtige" Infrastruktur in AWS.
 
-##TODO Terraform
+## AWS-Deployment
+
+Die "richtige" Infrastruktur (RDS PostgreSQL, ECR + App Runner fürs Backend, S3 + CloudFront fürs Frontend) wird per Terraform verwaltet und über GitHub-Actions-Workflows ausgerollt:
+
+- **Terraform** (`terraform.yml` / `terraform-manual.yml`) – Plan/Apply/Destroy der Infrastruktur, inklusive einer Destroy-All-Option, die auch die Bootstrap-Ressourcen (State-Bucket, OIDC-Rolle) mit abräumt.
+- **Deploy Backend / Deploy Frontend** – bauen bei Push auf `main` automatisch das Docker-Image bzw. den Vite-Build und rollen ihn aus.
+
+Einmaliges Setup, Henne-Ei-Problem beim ersten Deployment (App Runner braucht schon ein Image aus ECR) und alle Details stehen in [`terraform/README.md`](terraform/README.md).
