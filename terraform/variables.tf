@@ -51,6 +51,18 @@ variable "allowed_cidr_blocks" {
   type        = list(string)
 }
 
+variable "apprunner_cpu" {
+  description = "App-Runner-CPU-Konfiguration (siehe AWS-Doku für gültige Werte)."
+  type        = string
+  default     = "256"
+}
+
+variable "apprunner_memory" {
+  description = "App-Runner-Speicher-Konfiguration in MB (siehe AWS-Doku für gültige Werte)."
+  type        = string
+  default     = "512"
+}
+
 # ============================================================================
 # AUTOMATION VARIABLES (für Lambda + EventBridge + SES)
 # ============================================================================

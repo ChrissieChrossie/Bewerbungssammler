@@ -1,9 +1,20 @@
-# Terraform: RDS-PostgreSQL für den Bewerbungssammler
+# Terraform: AWS-Infrastruktur für den Bewerbungssammler
 
-Erstellt eine öffentlich erreichbare RDS-PostgreSQL-Instanz in `eu-central-1`.
-Die Tabellen (`users`, `companies`, `job_postings`, `applications`) legt
-Terraform **nicht** an – das übernimmt die FastAPI-App selbst beim Start
-(`Base.metadata.create_all` in `Backend/main.py`).
+Erstellt die komplette AWS-Infrastruktur in `eu-central-1`:
+
+- **RDS PostgreSQL** – öffentlich erreichbar per IP-Whitelist (lokale Entwicklung)
+  und zusätzlich vom App-Runner-VPC-Connector aus (Backend in Produktion).
+  Die Tabellen (`users`, `companies`, `job_postings`, `applications`) legt
+  Terraform **nicht** an – das übernimmt die FastAPI-App selbst beim Start
+  (`Base.metadata.create_all` in `Backend/main.py`).
+- **ECR-Repository + App Runner** – Backend läuft als Container in App Runner,
+  Image kommt aus ECR.
+- **S3 + CloudFront** – Frontend-Build (`frontend/dist`) liegt in einem privaten
+  S3-Bucket, ausgeliefert über eine CloudFront-Distribution. `/api/*` wird von
+  derselben Distribution an App Runner durchgereicht, sodass Frontend und
+  Backend eine gemeinsame Domain teilen (kein CORS nötig).
+
+Die öffentliche URL der Seite ist der Output `cloudfront_domain_name`.
 
 Der State liegt remote in S3 (mit DynamoDB-Lock), damit sowohl du lokal als
 auch GitHub Actions denselben Stand sehen. Dafür muss einmalig der
@@ -43,6 +54,10 @@ terraform output
 | `TF_STATE_BUCKET`            | Output `tf_state_bucket` aus Schritt 1         |
 | `TF_STATE_DYNAMODB_TABLE`    | Output `tf_lock_table` aus Schritt 1           |
 | `ALLOWED_CIDR_BLOCKS`        | z.B. `["203.0.113.5/32"]`                     |
+| `ECR_REPOSITORY_URL`         | Output `ecr_repository_url` (nach Schritt 4)  |
+| `APPRUNNER_SERVICE_ARN`      | Output `apprunner_service_arn` (nach Schritt 5) |
+| `FRONTEND_BUCKET`            | Output `frontend_bucket_name` (nach Schritt 5) |
+| `CLOUDFRONT_DISTRIBUTION_ID` | Output `cloudfront_distribution_id` (nach Schritt 5) |
 
 **Repo-Secrets:**
 
@@ -52,15 +67,72 @@ terraform output
 
 **GitHub Environment** `production` anlegen (Settings → Environments) und
 mindestens dich selbst als "Required reviewer" eintragen – das ist die
-manuelle Bestätigung, bevor `terraform apply` über GitHub Actions läuft.
+manuelle Bestätigung, bevor `terraform apply`, `deploy-backend.yml` oder
+`deploy-frontend.yml` über GitHub Actions laufen.
 
-## 3. Workflow nutzen
+## 3. Erstmaliges Deployment (Henne-Ei-Problem: App Runner braucht ein Image)
 
-- **Plan:** läuft automatisch bei jedem PR, das `terraform/**` ändert, und
+App Runner prüft beim Anlegen des Service, ob unter `<ecr_repository_url>:latest`
+bereits ein Image liegt. Ein einziger `terraform apply` von Anfang an schlägt
+deshalb fehl, solange das Repo noch leer ist. Reihenfolge beim ersten Mal:
+
+```bash
+# 1. Bootstrap mit der erweiterten IAM-Policy neu anwenden (ECR/App Runner/S3/CloudFront)
+cd terraform/bootstrap
+terraform apply
+
+# 2. Nur das ECR-Repo anlegen
+cd ../
+terraform apply -target=aws_ecr_repository.backend
+
+# 3. Erstes Image bauen und pushen
+aws ecr get-login-password --region eu-central-1 \
+  | docker login --username AWS --password-stdin <ecr_repository_url ohne :tag>
+docker build -t <ecr_repository_url>:latest ../Backend
+docker push <ecr_repository_url>:latest
+
+# 4. Vollständiger Apply – jetzt kann App Runner das Image ziehen,
+#    danach kann CloudFront angelegt werden (hängt vom App-Runner-Output ab)
+terraform apply
+```
+
+Anschließend `terraform output` auslesen und die vier neuen Repo-Variablen
+oben eintragen. Ab da übernehmen `deploy-backend.yml` / `deploy-frontend.yml`
+alle weiteren Deploys automatisch bei Push auf `main`.
+
+## 4. Workflows im Alltag
+
+- **Terraform Plan:** läuft automatisch bei jedem PR, das `terraform/**` ändert, und
   kommentiert das Ergebnis in den PR. Kann auch manuell über
   *Actions → Terraform → Run workflow* mit Aktion `plan` gestartet werden.
-- **Apply:** *Actions → Terraform → Run workflow* mit Aktion `apply` –
-  wartet wegen des `production`-Environments auf deine Bestätigung.
+- **Terraform Apply:** *Actions → Terraform → Run workflow* mit Aktion `apply` –
+  wartet wegen des `production`-Environments auf deine Bestätigung. Gleiche Aktion
+  gibt es auch als *Actions → Terraform Manual (Apply/Destroy) → Run workflow*.
+- **Terraform Destroy:** *Actions → Terraform Manual (Apply/Destroy) → Run workflow*
+  mit Aktion `destroy` – räumt den Haupt-Stack (RDS, ECR, App Runner, S3, CloudFront)
+  ab. `aws_ecr_repository.backend` (`force_delete`) und `aws_s3_bucket.frontend`
+  (`force_destroy`) sind bewusst so konfiguriert, dass der Destroy auch mit noch
+  vorhandenen Images/Objekten sauber durchläuft, ohne dass man vorher manuell etwas
+  leeren muss. Der Bootstrap-Teil (State-Bucket, Lock-Table, OIDC-Rolle) bleibt dabei
+  unangetastet.
+- **Terraform Destroy All (⚠️ nicht umkehrbar):** *Actions → Terraform Manual
+  (Apply/Destroy) → Run workflow* mit Aktion `destroy-all` und
+  `confirm_nuke = NUKE BOOTSTRAP`. Macht zusätzlich zum normalen Destroy auch den
+  Bootstrap platt: State-Bucket (inkl. aller Versionen), Lock-Table, den
+  OIDC-Provider und am Ende die eigene IAM-Rolle, mit der der Workflow gerade läuft
+  (Self-Destruct – funktioniert, weil die einmal geholte AWS-Session bis zum Ablauf
+  gültig bleibt). Danach hat GitHub Actions keinen AWS-Zugriff mehr; Abschnitt 1
+  (Bootstrapping) muss komplett neu lokal durchlaufen und alle Repo-Variablen/Secrets
+  aus Abschnitt 2 neu eingetragen werden. Voraussetzung: die IAM-Policy in
+  `bootstrap/github_oidc.tf` muss die `Nuke*`-Statements enthalten – falls die Rolle
+  noch mit einer älteren Policy-Version läuft, erst `cd bootstrap && terraform apply`
+  lokal ausführen, um die Rechte zu aktualisieren.
+- **Deploy Backend:** läuft automatisch bei Push auf `main` mit Änderungen unter
+  `Backend/**` – baut das Image, pusht es nach ECR und startet ein neues
+  App-Runner-Deployment.
+- **Deploy Frontend:** läuft automatisch bei Push auf `main` mit Änderungen unter
+  `frontend/**` – baut `frontend/dist`, synct es nach S3 und invalidiert den
+  CloudFront-Cache.
 
 ## Lokale Nutzung (alternativ zu GitHub Actions)
 
@@ -89,7 +161,14 @@ automatisch in der RDS-Datenbank angelegt.
 
 ## Aufräumen
 
+Lokal:
+
 ```bash
 terraform destroy                    # Haupt-Ressourcen (RDS etc.)
 cd bootstrap && terraform destroy    # Bootstrap-Ressourcen (State-Bucket etc.)
 ```
+
+Über GitHub Actions: siehe `destroy` bzw. `destroy-all` in Abschnitt 4. `destroy-all`
+ist das CI-Äquivalent zu den beiden Befehlen oben zusammen, nur ohne lokalen
+Bootstrap-State (räumt die Bootstrap-Ressourcen per rohem AWS-CLI ab, nicht per
+`terraform destroy`) – und ist entsprechend nicht umkehrbar.

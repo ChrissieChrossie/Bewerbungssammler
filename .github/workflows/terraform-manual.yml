@@ -1,0 +1,179 @@
+name: Terraform Manual (Apply/Destroy)
+
+on:
+    workflow_dispatch:
+        inputs:
+            action:
+                description: "Terraform-Aktion"
+                required: true
+                type: choice
+                options:
+                    - apply
+                    - destroy
+                    - destroy-all
+                default: apply
+            confirm_nuke:
+                description: "Nur für 'destroy-all': exakt 'NUKE BOOTSTRAP' eingeben. Zerstört zusätzlich State-Bucket, Lock-Table, OIDC-Rolle und OIDC-Provider - danach muss terraform/bootstrap lokal neu aufgesetzt werden."
+                required: false
+                type: string
+                default: ""
+
+permissions:
+    contents: read
+    id-token: write
+
+env:
+    TF_VAR_allowed_cidr_blocks: ${{ vars.ALLOWED_CIDR_BLOCKS }}
+    TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
+
+jobs:
+    apply:
+        name: Apply
+        if: github.event.inputs.action == 'apply'
+        runs-on: ubuntu-latest
+        environment: production
+        defaults:
+            run:
+                working-directory: terraform
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                  role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+                  aws-region: ${{ vars.AWS_REGION }}
+
+            - name: Setup Terraform
+              uses: hashicorp/setup-terraform@v3
+              with:
+                  terraform_version: "latest"
+
+            - name: Terraform Init
+              run: |
+                  terraform init -input=false \
+                    -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}" \
+                    -backend-config="key=bewerbungssammler/terraform.tfstate" \
+                    -backend-config="region=${{ vars.AWS_REGION }}" \
+                    -backend-config="dynamodb_table=${{ vars.TF_STATE_DYNAMODB_TABLE }}"
+
+            - name: Terraform Apply
+              run: terraform apply -auto-approve -input=false
+
+    destroy:
+        name: Destroy
+        if: github.event.inputs.action == 'destroy'
+        runs-on: ubuntu-latest
+        environment: production
+        defaults:
+            run:
+                working-directory: terraform
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                  role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+                  aws-region: ${{ vars.AWS_REGION }}
+
+            - name: Setup Terraform
+              uses: hashicorp/setup-terraform@v3
+              with:
+                  terraform_version: "latest"
+
+            - name: Terraform Init
+              run: |
+                  terraform init -input=false \
+                    -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}" \
+                    -backend-config="key=bewerbungssammler/terraform.tfstate" \
+                    -backend-config="region=${{ vars.AWS_REGION }}" \
+                    -backend-config="dynamodb_table=${{ vars.TF_STATE_DYNAMODB_TABLE }}"
+
+            - name: Terraform Destroy
+              run: terraform destroy -auto-approve -input=false
+
+    # ACHTUNG: zerstört zusätzlich zum Haupt-Stack auch die Bootstrap-Ressourcen
+    # (State-Bucket, Lock-Table, die IAM-Rolle, mit der dieser Workflow gerade läuft,
+    # und den OIDC-Provider). Nicht umkehrbar - danach muss "terraform/bootstrap" lokal
+    # neu aufgesetzt und alle Repo-Variablen/Secrets neu eingetragen werden. Läuft nur,
+    # wenn confirm_nuke exakt "NUKE BOOTSTRAP" ist.
+    destroy-all:
+        name: Destroy All (inkl. Bootstrap)
+        if: github.event.inputs.action == 'destroy-all'
+        runs-on: ubuntu-latest
+        environment: production
+        defaults:
+            run:
+                working-directory: terraform
+        steps:
+            - name: Bestätigungsphrase prüfen
+              run: |
+                  if [ "${{ github.event.inputs.confirm_nuke }}" != "NUKE BOOTSTRAP" ]; then
+                    echo "confirm_nuke muss exakt 'NUKE BOOTSTRAP' sein. Abbruch."
+                    exit 1
+                  fi
+
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                  role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+                  aws-region: ${{ vars.AWS_REGION }}
+
+            - name: Setup Terraform
+              uses: hashicorp/setup-terraform@v3
+              with:
+                  terraform_version: "latest"
+
+            - name: Terraform Init
+              run: |
+                  terraform init -input=false \
+                    -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}" \
+                    -backend-config="key=bewerbungssammler/terraform.tfstate" \
+                    -backend-config="region=${{ vars.AWS_REGION }}" \
+                    -backend-config="dynamodb_table=${{ vars.TF_STATE_DYNAMODB_TABLE }}"
+
+            - name: Terraform Destroy (Haupt-Stack)
+              run: terraform destroy -auto-approve -input=false
+
+            - name: State-Bucket komplett leeren und löschen
+              run: |
+                  BUCKET="${{ vars.TF_STATE_BUCKET }}"
+                  aws s3api list-object-versions --bucket "$BUCKET" --output json \
+                    --query '{Objects: Versions[].{Key:Key,VersionId:VersionId}}' > /tmp/versions.json
+                  if [ "$(jq '.Objects | length' /tmp/versions.json)" -gt 0 ]; then
+                    aws s3api delete-objects --bucket "$BUCKET" --delete file:///tmp/versions.json
+                  fi
+                  aws s3api list-object-versions --bucket "$BUCKET" --output json \
+                    --query '{Objects: DeleteMarkers[].{Key:Key,VersionId:VersionId}}' > /tmp/markers.json
+                  if [ "$(jq '.Objects | length' /tmp/markers.json)" -gt 0 ]; then
+                    aws s3api delete-objects --bucket "$BUCKET" --delete file:///tmp/markers.json
+                  fi
+                  aws s3api delete-bucket --bucket "$BUCKET"
+
+            - name: Lock-Table löschen
+              run: aws dynamodb delete-table --table-name "${{ vars.TF_STATE_DYNAMODB_TABLE }}"
+
+            - name: OIDC-Provider löschen (falls von diesem Projekt angelegt)
+              run: |
+                  ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+                  PROVIDER_ARN="arn:aws:iam::${ACCOUNT_ID}:oidc-provider/token.actions.githubusercontent.com"
+                  if aws iam get-open-id-connect-provider --open-id-connect-provider-arn "$PROVIDER_ARN" >/dev/null 2>&1; then
+                    aws iam delete-open-id-connect-provider --open-id-connect-provider-arn "$PROVIDER_ARN"
+                  else
+                    echo "Kein OIDC-Provider gefunden, überspringe."
+                  fi
+
+            - name: Eigene IAM-Rolle löschen (self-destruct)
+              run: |
+                  ROLE_ARN="${{ vars.AWS_ROLE_ARN }}"
+                  ROLE_NAME="${ROLE_ARN##*/}"
+                  for POLICY in $(aws iam list-role-policies --role-name "$ROLE_NAME" --query 'PolicyNames' --output text); do
+                    aws iam delete-role-policy --role-name "$ROLE_NAME" --policy-name "$POLICY"
+                  done
+                  aws iam delete-role --role-name "$ROLE_NAME"

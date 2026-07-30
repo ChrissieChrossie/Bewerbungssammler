@@ -22,10 +22,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.include_router(users.router)
-app.include_router(companies.router)
-app.include_router(job_postings.router)
-app.include_router(applications.router)
+app.include_router(users.router, prefix="/api")
+app.include_router(companies.router, prefix="/api")
+app.include_router(job_postings.router, prefix="/api")
+app.include_router(applications.router, prefix="/api")
 
 
 @app.get("/", tags=["Health"])

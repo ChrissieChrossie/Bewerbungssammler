@@ -9,35 +9,34 @@
 ### Schritt 1: Repository klonen (falls noch nicht geschehen)
 ```bash
 git clone <repository-url>
-cd Bewerbungssammler/frontend
+cd Bewerbungssammler
 ```
 
-### Schritt 2: Dependencies installieren
+### Schritt 2: Alles zusammen starten
 ```bash
-npm install
+docker compose up --build
 ```
-→ Installiert React, Vite, Tailwind und alles andere (dauert ~1-2 Minuten)
+→ Startet Datenbank, Backend (`http://localhost:8000`) und Frontend (`http://localhost:5173`) zusammen. Änderungen in `frontend/src` werden dank Volume-Mount + Hot Reload sofort übernommen, kein Neubau nötig.
 
-### Schritt 3: Backend starten (in separatem Terminal)
-```bash
-cd ..  # Gehe eine Ebene nach oben
-docker-compose up --build
-```
-→ Backend läuft auf `http://localhost:8000`
-
-### Schritt 4: Frontend starten (in neuem Terminal)
-```bash
-cd frontend
-npm run dev
-```
-→ Frontend läuft auf `http://localhost:5173`
-
-### Schritt 5: Browser öffnen
+### Schritt 3: Browser öffnen
 ```
 http://localhost:5173
 ```
 
 ✅ **FERTIG!** Die App sollte jetzt laufen.
+
+---
+
+### Alternative: Nur das Frontend lokal (ohne Docker)
+
+Falls das Backend schon anderweitig läuft und du nur am Frontend arbeiten willst:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+→ Frontend läuft auf `http://localhost:5173`, proxyt `/api`-Requests standardmäßig an `http://localhost:8000`.
 
 ---
 
@@ -173,15 +172,20 @@ Alle Styles in `src/index.css` definiert.
 **Problem**: Backend läuft nicht
 **Lösung**:
 ```bash
-docker-compose up --build  # In neuem Terminal starten
+docker compose up --build
 ```
 
 ### ❌ "Module not found"
-**Problem**: Dependencies nicht installiert
-**Lösung**:
+**Problem**: Dependencies nicht aktuell/installiert
+**Lösung** (lokal ohne Docker):
 ```bash
 rm -rf node_modules package-lock.json
 npm install
+```
+**Lösung** (mit Docker, z.B. nach neuen Dependencies in `package.json`):
+```bash
+docker compose build --no-cache frontend
+docker compose up
 ```
 
 ### ❌ Port 5173 ist schon in Benutzung
