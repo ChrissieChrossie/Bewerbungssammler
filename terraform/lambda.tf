@@ -144,13 +144,7 @@ resource "aws_lambda_permission" "allow_eventbridge" {
 # ============================================================================
 
 resource "aws_cloudwatch_log_group" "automation_lambda" {
-  name              = "/aws/lambda/${var.project_name}-automation"
-  retention_in_days = 14
-
-  tags = {
-    Name    = "${var.project_name}-automation-logs"
-    Purpose = "CloudWatch Logs für Lambda Automation"
-  }
+  name = "/aws/lambda/${var.project_name}-automation"
 }
 
 # ============================================================================

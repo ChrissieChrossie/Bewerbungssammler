@@ -10,6 +10,8 @@ data "aws_subnets" "default" {
   }
 }
 
+data "aws_caller_identity" "current" {}
+
 resource "aws_db_subnet_group" "this" {
   name       = "${var.project_name}-db-subnet-group"
   subnet_ids = data.aws_subnets.default.ids
@@ -26,14 +28,6 @@ resource "aws_security_group" "db" {
     to_port     = 5432
     protocol    = "tcp"
     cidr_blocks = var.allowed_cidr_blocks
-  }
-
-  ingress {
-    description     = "Postgres vom App-Runner-VPC-Connector (Backend-Zugriff)"
-    from_port       = 5432
-    to_port         = 5432
-    protocol        = "tcp"
-    security_groups = [aws_security_group.apprunner_connector.id]
   }
 
   ingress {
