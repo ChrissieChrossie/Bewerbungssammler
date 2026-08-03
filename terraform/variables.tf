@@ -62,3 +62,46 @@ variable "apprunner_memory" {
   type        = string
   default     = "512"
 }
+
+# ============================================================================
+# AUTOMATION VARIABLES (für Lambda + EventBridge + SES)
+# ============================================================================
+
+variable "automation_sender_email" {
+  description = "Sender-Email für Automation-Reports (muss in SES verifiziert sein)"
+  type        = string
+  default     = "noreply@bewerbungssammler.local"
+}
+
+variable "automation_recipient_email" {
+  description = "Empfänger-Email für Automation-Reports (im Sandbox-Modus muss auch diese verifiziert sein)"
+  type        = string
+}
+
+variable "automation_schedule_hour" {
+  description = "Stunde (UTC), um die die Automation täglich läuft (0-23, z.B. 8 für 8 Uhr)"
+  type        = number
+  default     = 8
+  validation {
+    condition     = var.automation_schedule_hour >= 0 && var.automation_schedule_hour <= 23
+    error_message = "Stunde muss zwischen 0 und 23 liegen."
+  }
+}
+
+variable "automation_enabled" {
+  description = "Ist die Automation aktiviert? (true/false)"
+  type        = bool
+  default     = true
+}
+
+variable "automation_days_open_critical" {
+  description = "Nach wie vielen Tagen ist Status OPEN kritisch? (keine Antwort)"
+  type        = number
+  default     = 7
+}
+
+variable "automation_days_in_progress_warning" {
+  description = "Nach wie vielen Tagen ist Status IN_PROGRESS ein Warning? (Nachfassen nötig)"
+  type        = number
+  default     = 14
+}
