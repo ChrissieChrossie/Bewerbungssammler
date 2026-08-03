@@ -4,3 +4,18 @@ db_password = "changeme-use-a-strong-password"
 
 # Eigene öffentliche IP mit /32, z.B. per "curl ifconfig.me" ermitteln.
 allowed_cidr_blocks = ["203.0.113.5/32"]
+
+# ============================================================================
+# AUTOMATION (Lambda + SES Emails)
+# ============================================================================
+
+# Sender-Email: Diese Email-Adresse muss nach "terraform apply" über den
+# Verifikations-Link in AWS SES bestätigt werden (Email-Postfach checken!).
+automation_sender_email = "noreply@example.com"
+
+# Empfänger: Im SES-Sandbox-Modus muss auch diese Adresse verifiziert sein.
+# Du bekommst den täglichen Bewerbungs-Report an diese Adresse.
+automation_recipient_email = "deine@email.de"
+
+# Optional: Stunde (UTC) für den täglichen Report (default: 8 = 8:00 Uhr UTC = 9/10 Uhr DE)
+# automation_schedule_hour = 8

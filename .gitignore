@@ -17,4 +17,6 @@ terraform/**/terraform.tfvars
 terraform/**/*.tfplan
 /terraform/terrform-tfvars
 /terraform/terrform.tfvars
+/terraform/automation_lambda.zip
+/Backend/lambda_package/
 /Backend/.env

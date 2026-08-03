@@ -39,6 +39,23 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
 
+            - name: Setup Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+
+            - name: Lambda-Paket bauen (automation_lambda.zip)
+              working-directory: Backend
+              run: |
+                  rm -rf lambda_package
+                  pip install --target lambda_package -r requirements-lambda.txt
+                  cp -r automation lambda_package/
+                  cp database.py lambda_package/
+                  cp -r models lambda_package/
+                  find lambda_package -name "__pycache__" -type d -exec rm -rf {} +
+                  cd lambda_package
+                  zip -rq ../../terraform/automation_lambda.zip .
+
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@v4
               with:
@@ -72,6 +89,23 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+
+            - name: Setup Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+
+            - name: Lambda-Paket bauen (automation_lambda.zip)
+              working-directory: Backend
+              run: |
+                  rm -rf lambda_package
+                  pip install --target lambda_package -r requirements-lambda.txt
+                  cp -r automation lambda_package/
+                  cp database.py lambda_package/
+                  cp -r models lambda_package/
+                  find lambda_package -name "__pycache__" -type d -exec rm -rf {} +
+                  cd lambda_package
+                  zip -rq ../../terraform/automation_lambda.zip .
 
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@v4
@@ -118,6 +152,23 @@ jobs:
 
             - name: Checkout
               uses: actions/checkout@v4
+
+            - name: Setup Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+
+            - name: Lambda-Paket bauen (automation_lambda.zip)
+              working-directory: Backend
+              run: |
+                  rm -rf lambda_package
+                  pip install --target lambda_package -r requirements-lambda.txt
+                  cp -r automation lambda_package/
+                  cp database.py lambda_package/
+                  cp -r models lambda_package/
+                  find lambda_package -name "__pycache__" -type d -exec rm -rf {} +
+                  cd lambda_package
+                  zip -rq ../../terraform/automation_lambda.zip .
 
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@v4
