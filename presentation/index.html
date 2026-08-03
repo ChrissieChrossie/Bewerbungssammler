@@ -15,7 +15,7 @@
     <div class="slides">
 
       <!-- ============================================================ -->
-      <!-- 1. TITELFOLIE — 0:15 -->
+      <!-- 1. TITELFOLIE — 
       <!-- ============================================================ -->
       <section data-corner-logo="hide">
         <div class="title-slide">
@@ -27,22 +27,20 @@
           <h1>Bewerbungssammler</h1>
           <p class="subtitle">Bewerbungen, Unternehmen &amp; Stellenausschreibungen an einem Ort</p>
           <div class="meta">
-            <div><strong><span class="tbd">BITTE ERGÄNZEN</span></strong>Präsentierende</div>
-            <div><strong><span class="tbd">BITTE ERGÄNZEN</span></strong>Datum</div>
+            <div><strong><span class="">Dennis Rapp, Christopher Wolter</span></strong>Präsentierende</div>
+            <div><strong><span class="">07.08.2025</span></strong>Datum</div>
           </div>
         </div>
         <aside class="notes">
-          Zeitbudget: 15 Sek.<br>
           Kurz begrüßen, Projektname nennen, direkt zur Agenda überleiten. Ausformulierter Einstieg:
-          "Hallo zusammen, wir zeigen euch heute den Bewerbungssammler – unser Projekt aus Praxisphase 2."
+      
         </aside>
       </section>
 
       <!-- ============================================================ -->
-      <!-- 2. AGENDA — 0:15 -->
+      <!-- 2. AGENDA
       <!-- ============================================================ -->
       <section>
-        <div class="timebox">0:15</div>
         <p class="kicker">Agenda</p>
         <h2>Was euch erwartet</h2>
         <div class="card-grid cols-4">
@@ -52,16 +50,14 @@
           <div class="card fragment fade-up"><h3>11–15</h3><p>Ergebnisse, Ausblick, Fragen</p></div>
         </div>
         <aside class="notes">
-          Zeitbudget: 15 Sek.<br>
           Nur grob überfliegen, nicht jede Kachel einzeln vorlesen. Ein Satz: "Wir starten beim Problem, gehen über Architektur und Live-Demo bis zu Ergebnissen und Ausblick."
         </aside>
       </section>
 
       <!-- ============================================================ -->
-      <!-- 3. EINFÜHRUNG / PROBLEMSTELLUNG — 1:05 -->
+      <!-- 3. EINFÜHRUNG / PROBLEMSTELLUNG
       <!-- ============================================================ -->
       <section>
-        <div class="timebox">1:05</div>
         <p class="kicker">Einführung</p>
         <h2>Das Problem: Excel-Chaos im Bewerbungsprozess</h2>
         <div class="two-col">
@@ -83,14 +79,11 @@
           </div>
         </div>
         <p class="fragment fade-up" style="margin-top:0.9em; font-size:0.65em;">
-          Ziel der Projektphase: <span class="tbd">BITTE ERGÄNZEN – offizieller Auftrag/Scope laut Kursvorgabe</span>
+          Ziel der Projektphase: Lauffähiges MVP
         </p>
         <aside class="notes">
-          Zeitbudget: 1:05 Min.<br>
-          • Aus README zitieren: "Excel-Tabelle mit 47 Tabs, in der irgendwo der Überblick verloren geht"<br>
           • Zielgruppe: alle, die aktiv mehrere Bewerbungen gleichzeitig verfolgen<br>
           • Fachbegriff-Erklärung falls gefragt: "Self-hosting" = die Anwendung läuft auf eigener Infrastruktur statt bei einem fremden Anbieter<br>
-          • Den [BITTE ERGÄNZEN]-Punkt vorher durch den offiziellen Praxisphasen-Auftrag ersetzen.
         </aside>
       </section>
 
@@ -98,7 +91,6 @@
       <!-- 4. ARCHITEKTUR-ÜBERBLICK — 1:30 -->
       <!-- ============================================================ -->
       <section>
-        <div class="timebox">1:30</div>
         <p class="kicker">Architektur</p>
         <h2>Frontend ↔ Backend ↔ Datenbank</h2>
         <div class="diagram-wrap">
@@ -162,10 +154,9 @@
           </svg>
         </div>
         <p class="fragment fade-up" style="text-align:center; margin-top:0.4em; font-size:0.55em;">
-          Produktion: gleiche Struktur — CloudFront + S3 · App Runner · RDS (Terraform-verwaltet)
+          Produktion: gleiche Struktur — CloudFront + S3 · App Runner · RDS · Lambda/EventBridge/SES für die tägliche Automation (alles Terraform-verwaltet)
         </p>
         <aside class="notes">
-          Zeitbudget: 1:30 Min.<br>
           • Von oben nach unten erklären: Browser lädt die React-SPA, die über den Vite-Proxy /api-Aufrufe ans Backend schickt<br>
           • Backend spricht per SQLAlchemy mit Postgres, Alembic hält das Schema versioniert<br>
           • Fachbegriff: "Vite-Dev-Proxy" = leitet Anfragen an /api im Hintergrund ans Backend weiter, damit Frontend und Backend im Browser wie eine einzige Adresse wirken<br>
@@ -176,13 +167,12 @@
       </section>
 
       <!-- ============================================================ -->
-      <!-- 5. TECH-STACK — 0:40 -->
+      <!-- 5. TECH-STACK 
       <!-- ============================================================ -->
       <section>
-        <div class="timebox">0:40</div>
         <p class="kicker">Tech-Stack</p>
         <h2>Bewusst schlank gehalten</h2>
-        <div class="card-grid cols-4">
+        <div class="card-grid cols-3">
           <div class="card fragment fade-up">
             <h3>React 18 + Vite 5</h3>
             <p>Schneller Dev-Server mit Hot-Reload, kein Build-Warten während der Entwicklung.</p>
@@ -199,19 +189,22 @@
             <h3>Docker + Terraform</h3>
             <p>Lokale Entwicklung reproduzierbar, AWS-Infrastruktur als Code.</p>
           </div>
+          <div class="card fragment fade-up">
+            <h3>Lambda + EventBridge + SES</h3>
+            <p>Tägliche Automation ganz ohne eigenen Server — läuft nur, wenn sie wirklich etwas zu tun hat.</p>
+          </div>
         </div>
         <aside class="notes">
-          Zeitbudget: 0:40 Min.<br>
           Pro Karte höchstens einen Satz sagen, nicht vorlesen. FastAPI kurz einordnen: "Python-Framework, spezialisiert auf REST-APIs, ähnlich zu Express bei Node.js, nur mit eingebauter Validierung."<br>
+          Lambda-Karte: EventBridge = Cron-Trigger in AWS, SES = AWS-Maildienst zum Versenden. Zusammen: täglicher Check überfälliger Bewerbungen + Mail-Report, ohne dauerhaft laufenden Server.<br>
           Falls Zeit fehlt: diese Folie im Zweifel kürzen, nicht die Demo.
         </aside>
       </section>
 
       <!-- ============================================================ -->
-      <!-- 6. DATENBANKSTRUKTUR — 0:40 -->
+      <!-- 6. DATENBANKSTRUKTUR
       <!-- ============================================================ -->
       <section>
-        <div class="timebox">0:40</div>
         <p class="kicker">Datenbankstruktur</p>
         <h2>5 Tabellen, klar verknüpft</h2>
         <div class="diagram-wrap">
@@ -222,7 +215,7 @@
               </marker>
             </defs>
 
-            <!-- companies -->
+            <!-- companies (Fragment 1: keine eingehenden Pfeile) -->
             <g class="fragment fade-up">
               <rect x="30" y="20" width="210" height="96" rx="10" fill="#1f1533" stroke="#d946ef" stroke-width="1.5"/>
               <rect x="30" y="20" width="210" height="28" rx="10" fill="#d946ef" fill-opacity="0.25"/>
@@ -232,8 +225,9 @@
               <text x="45" y="102" fill="#e9d5ff" font-size="12">homepage</text>
             </g>
 
-            <!-- job_postings -->
+            <!-- job_postings (Fragment 2: inkl. Pfeil companies -> job_postings, Quelle ist ab Fragment 1 sichtbar) -->
             <g class="fragment fade-up">
+              <line x1="242" y1="68" x2="306" y2="90" stroke="#c4b5fd" stroke-width="2" marker-end="url(#arrow2)"/>
               <rect x="310" y="20" width="230" height="146" rx="10" fill="#1f1533" stroke="#d946ef" stroke-width="1.5"/>
               <rect x="310" y="20" width="230" height="28" rx="10" fill="#d946ef" fill-opacity="0.25"/>
               <text x="425" y="39" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">job_postings</text>
@@ -244,7 +238,7 @@
               <text x="325" y="138" fill="#fcd34d" font-size="12">FK company_id</text>
             </g>
 
-            <!-- users -->
+            <!-- users (Fragment 3: keine eingehenden Pfeile) -->
             <g class="fragment fade-up">
               <rect x="30" y="220" width="240" height="186" rx="10" fill="#1f1533" stroke="#f59e0b" stroke-width="1.5"/>
               <rect x="30" y="220" width="240" height="28" rx="10" fill="#f59e0b" fill-opacity="0.25"/>
@@ -257,8 +251,11 @@
               <text x="45" y="356" fill="#e9d5ff" font-size="12">last_login_at</text>
             </g>
 
-            <!-- applications -->
+            <!-- applications (Fragment 4: inkl. Pfeile job_postings -> applications und users -> applications,
+                 beide Quellen sind ab Fragment 2 bzw. 3 sichtbar) -->
             <g class="fragment fade-up">
+              <line x1="425" y1="166" x2="440" y2="238" stroke="#c4b5fd" stroke-width="2" marker-end="url(#arrow2)"/>
+              <line x1="270" y1="300" x2="328" y2="300" stroke="#c4b5fd" stroke-width="2" marker-end="url(#arrow2)"/>
               <rect x="330" y="240" width="230" height="166" rx="10" fill="#1f1533" stroke="#d946ef" stroke-width="1.5"/>
               <rect x="330" y="240" width="230" height="28" rx="10" fill="#d946ef" fill-opacity="0.25"/>
               <text x="445" y="259" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">applications</text>
@@ -269,8 +266,11 @@
               <text x="345" y="358" fill="#e9d5ff" font-size="12">applied_at · note</text>
             </g>
 
-            <!-- refresh_tokens -->
+            <!-- refresh_tokens (Fragment 5: inkl. Pfeil users -> refresh_tokens. Route führt über die
+                 Lücke zwischen job_postings und applications, statt (wie vorher) mitten durch die
+                 applications-Box zu schneiden. Quelle users ist ab Fragment 3 sichtbar) -->
             <g class="fragment fade-up">
+              <path d="M 150 220 L 150 190 L 775 190 L 775 220" fill="none" stroke="#c4b5fd" stroke-width="2" marker-end="url(#arrow2)"/>
               <rect x="650" y="220" width="250" height="186" rx="10" fill="#1f1533" stroke="#f59e0b" stroke-width="1.5"/>
               <rect x="650" y="220" width="250" height="28" rx="10" fill="#f59e0b" fill-opacity="0.25"/>
               <text x="775" y="239" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">refresh_tokens</text>
@@ -280,16 +280,9 @@
               <text x="665" y="320" fill="#e9d5ff" font-size="12">expires_at · revoked_at</text>
               <text x="665" y="338" fill="#e9d5ff" font-size="12">remember_me</text>
             </g>
-
-            <!-- Relations -->
-            <line x1="135" y1="116" x2="220" y2="220" stroke="#c4b5fd" stroke-width="2" marker-end="url(#arrow2)"/>
-            <line x1="425" y1="166" x2="440" y2="238" stroke="#c4b5fd" stroke-width="2" marker-end="url(#arrow2)"/>
-            <line x1="270" y1="300" x2="328" y2="300" stroke="#c4b5fd" stroke-width="2" marker-end="url(#arrow2)"/>
-            <line x1="270" y1="260" x2="648" y2="260" stroke="#c4b5fd" stroke-width="2" marker-end="url(#arrow2)"/>
           </svg>
         </div>
         <aside class="notes">
-          Zeitbudget: 0:40 Min.<br>
           • Kern-Tabelle: applications, verbindet users und job_postings<br>
           • users trägt jetzt zusätzlich die Auth-Felder (password_hash, Timestamps)<br>
           • refresh_tokens ist neu für den Login: jede Sitzung ist einzeln widerrufbar (Logout, Passwortwechsel)<br>
@@ -299,10 +292,9 @@
       </section>
 
       <!-- ============================================================ -->
-      <!-- 7. FUNKTIONALITÄTEN — 1:10 -->
+      <!-- 7. FUNKTIONALITÄTEN
       <!-- ============================================================ -->
       <section>
-        <div class="timebox">1:10</div>
         <p class="kicker">Funktionalitäten</p>
         <h2>Was heute wirklich läuft</h2>
         <div class="card-grid cols-2">
@@ -314,7 +306,22 @@
             <div class="browser-frame"><img src="assets/screenshots/applications.jpg" alt="Bewerbungsliste" /></div>
             <h3 style="margin-top:0.5em;">Bewerbungen, Unternehmen, Stellen</h3>
           </div>
-          <div class="card fragment fade-up">
+        </div>
+        <aside class="notes">
+          Screenshots sprechen lassen, nicht nacherzählen. Betonen: jeder Nutzer sieht nur seine eigenen Bewerbungen (Backend-seitig durchgesetzt, nicht nur im Frontend versteckt).<br>
+          Letzte Zeile kurz erwähnen: Automation läuft im Hintergrund (Lambda + EventBridge + SES), kein UI dafür, daher kein Screenshot — Details folgen im Tech-Stack.
+        </aside>
+      </section>
+
+
+      <!-- ============================================================ -->
+      <!-- 7. FUNKTIONALITÄTEN 2
+      <!-- ============================================================ -->
+      <section>
+        <p class="kicker">Funktionalitäten</p>
+        <h2>Was heute wirklich läuft</h2>
+        <div class="card-grid cols-2">
+          <div class="card">
             <div class="browser-frame"><img src="assets/screenshots/login.jpg" alt="Login-Formular" /></div>
             <h3 style="margin-top:0.5em;">Registrierung &amp; Login (JWT)</h3>
           </div>
@@ -323,18 +330,21 @@
             <h3 style="margin-top:0.5em;">Eigene Daten pro Nutzer</h3>
           </div>
         </div>
+        <p class="fragment fade-up" style="margin-top:0.8em; font-size:0.65em;">
+          <span class="badge badge-amber" style="font-size:1em;">+ Backend</span>&nbsp; Tägliche Automation (Lambda) prüft überfällige Bewerbungen und verschickt einen Mail-Report — läuft unsichtbar, kein eigener Screenshot dafür
+        </p>
         <aside class="notes">
-          Zeitbudget: 1:10 Min.<br>
-          Screenshots sprechen lassen, nicht nacherzählen. Betonen: jeder Nutzer sieht nur seine eigenen Bewerbungen (Backend-seitig durchgesetzt, nicht nur im Frontend versteckt).
+          Screenshots sprechen lassen, nicht nacherzählen. Betonen: jeder Nutzer sieht nur seine eigenen Bewerbungen (Backend-seitig durchgesetzt, nicht nur im Frontend versteckt).<br>
+          Letzte Zeile kurz erwähnen: Automation läuft im Hintergrund (Lambda + EventBridge + SES), kein UI dafür, daher kein Screenshot — Details folgen im Tech-Stack.
         </aside>
       </section>
 
       <!-- ============================================================ -->
-      <!-- 8. LIVE-DEMO — 3:00 (+ Fallback-Subslide) -->
+      <!-- 8. LIVE-DEMO
       <!-- ============================================================ -->
       <section>
         <section>
-          <div class="timebox">3:00</div>
+
           <p class="kicker">Live-Demo</p>
           <h2>Ab hier: echte Anwendung</h2>
           <div class="pill-step fragment fade-up"><span class="num">1</span><span class="label">Landing-Page → Registrieren</span></div>
@@ -374,14 +384,13 @@
       </section>
 
       <!-- ============================================================ -->
-      <!-- 9. IMPLEMENTIERUNG – HIGHLIGHTS — 0:50 (+ 2 Subslides) -->
+      <!-- 9. IMPLEMENTIERUNG – HIGHLIGHTS
       <!-- ============================================================ -->
       <section>
         <section>
-          <div class="timebox">0:50</div>
           <p class="kicker">Implementierung</p>
-          <h2>Zwei technische Highlights</h2>
-          <div class="card-grid cols-2">
+          <h2>Drei technische Highlights</h2>
+          <div class="card-grid cols-3">
             <div class="card fragment fade-up">
               <h3>🔐 Auth-Flow</h3>
               <p>JWT-Access-Token + rotierender Refresh-Token, beide in HttpOnly-Cookies.</p>
@@ -390,16 +399,20 @@
               <h3>🐳 Docker-Setup</h3>
               <p>Migrationen laufen automatisch beim Start — auch auf bereits bestehenden Datenbanken.</p>
             </div>
+            <div class="card fragment fade-up">
+              <h3>⏰ Automation</h3>
+              <p>Lambda + EventBridge + SES: täglicher Check überfälliger Bewerbungen, Report per Mail.</p>
+            </div>
           </div>
           <p class="text-muted" style="margin-top:0.8em; font-size:0.5em;">↓ Details je ein Code-Ausschnitt</p>
           <aside class="notes">
-            Zeitbudget: 0:50 Min. (für alle drei Folien dieses Abschnitts zusammen)<br>
+            Zeitbudget: 1:05 Min. (für alle vier Folien dieses Abschnitts zusammen)<br>
             Nur ankündigen, Details folgen auf den nächsten (vertikalen) Folien. Falls Zeit knapp wird: diesen Abschnitt ganz überspringen und direkt zu Herausforderungen springen.
           </aside>
         </section>
 
         <section>
-          <p class="kicker">Highlight 1 / 2</p>
+          <p class="kicker">Highlight 1 / 3</p>
           <h3>Timing-sicherer Login</h3>
           <pre><code class="language-python" data-trim data-line-numbers>
 # Backend/routers/auth.py
@@ -416,7 +429,7 @@ if not user or not password_valid:
         </section>
 
         <section>
-          <p class="kicker">Highlight 2 / 2</p>
+          <p class="kicker">Highlight 2 / 3</p>
           <h3>Migrationen, die auf bestehenden DBs nicht crashen</h3>
           <pre><code class="language-python" data-trim data-line-numbers>
 # Backend/database.py
@@ -430,13 +443,30 @@ command.upgrade(alembic_cfg, "head")
             Fachbegriff: "Migration" = eine versionierte, nachvollziehbare Änderung am Datenbank-Schema (statt manueller SQL-Befehle). "Stamp" = der DB sagen "du bist schon auf diesem Stand", ohne die zugehörigen Befehle nochmal auszuführen.
           </aside>
         </section>
+
+        <section>
+          <p class="kicker">Highlight 3 / 3</p>
+          <h3>Serverlose Automation: ein Cron-Trigger genügt</h3>
+          <pre><code class="language-plaintext" data-trim>
+# terraform/eventbridge.tf
+resource "aws_cloudwatch_event_rule" "daily_automation" {
+  schedule_expression = "cron(0 8 * * ? *)"
+}
+          </code></pre>
+          <p class="code-caption">EventBridge triggert täglich um 8:00 UTC die Lambda (<code>Backend/automation/</code>) — die prüft alle offenen Bewerbungen (OPEN &gt; 7 Tage, IN_PROGRESS &gt; 14 Tage) und verschickt einen HTML-Report per SES. Kein eigener Server läuft dafür durchgehend.</p>
+          <aside class="notes">
+            Fachbegriff: "Cron" = Zeitplan-Syntax für wiederkehrende Aufgaben, hier "täglich um 8 Uhr". EventBridge ist AWS' Cron-Dienst.<br>
+            Deployte Ressourcen kurz aufzählen falls gefragt: aws_lambda_function (Python 3.12), aws_cloudwatch_event_rule (Cron), aws_ses_email_identity (Sender + Empfänger, beide müssen im SES-Sandbox-Modus verifiziert werden), aws_iam_role mit minimalen Rechten (Logs, SES, VPC/RDS), aws_security_group für den RDS-Zugriff.<br>
+            Empfänger-Adresse (nur für dich als Referenz, nicht auf der Folie zeigen): post@dennis-rapp.com.<br>
+            Test-Ablauf: DB-Tabellen einmalig anlegen, dann `aws lambda invoke --function-name bewerbungssammler-automation ...` manuell testen, Mail im Postfach prüfen, danach den nächsten automatischen Lauf abwarten (8:00 UTC = 9 oder 10 Uhr deutscher Zeit, je nach Sommerzeit).
+          </aside>
+        </section>
       </section>
 
       <!-- ============================================================ -->
-      <!-- 10. HERAUSFORDERUNGEN & LÖSUNGEN — 1:10 -->
+      <!-- 10. HERAUSFORDERUNGEN & LÖSUNGEN 
       <!-- ============================================================ -->
       <section>
-        <div class="timebox">1:10</div>
         <p class="kicker">Herausforderungen</p>
         <h2>3 Probleme, 3 Lösungen</h2>
         <div class="card-grid cols-3">
@@ -469,10 +499,9 @@ command.upgrade(alembic_cfg, "head")
       </section>
 
       <!-- ============================================================ -->
-      <!-- 11. WAS LIEF GUT / SCHLECHT — 0:45 -->
+      <!-- 11. WAS LIEF GUT / SCHLECHT
       <!-- ============================================================ -->
       <section>
-        <div class="timebox">0:45</div>
         <p class="kicker">Retrospektive</p>
         <h2>Was lief gut, was lief schlecht</h2>
         <div class="two-col">
@@ -480,7 +509,7 @@ command.upgrade(alembic_cfg, "head")
             <h3>👍 Gut</h3>
             <ul>
               <li class="fragment fade-up">Klare Architektur von Anfang an</li>
-              <li class="fragment fade-up">25 automatisierte Tests, alle grün</li>
+              <li class="fragment fade-up">Zeitmanagement</li>
               <li class="fragment fade-up">CI/CD bis zum AWS-Deployment</li>
             </ul>
           </div>
@@ -488,60 +517,58 @@ command.upgrade(alembic_cfg, "head")
             <h3>👎 Verbesserungspotenzial</h3>
             <ul>
               <li class="fragment fade-up">Migrationstool erst spät eingeführt</li>
-              <li class="fragment fade-up"><span class="tbd">BITTE ERGÄNZEN</span> Team-/Zeitmanagement</li>
-              <li class="fragment fade-up"><span class="tbd">BITTE ERGÄNZEN</span> weiterer Punkt</li>
+              <li class="fragment fade-up">Click UP Stories und Tickets richtig pflegen</li>
             </ul>
           </div>
         </div>
         <aside class="notes">
-          Zeitbudget: 0:45 Min.<br>
           Ehrlich und konkret bleiben, keine Plattitüden. Die zwei [BITTE ERGÄNZEN]-Punkte vor der Präsentation durch echte Team-Erfahrungen ersetzen (Zeitdruck, Aufgabenverteilung, Kommunikation o.ä. — das kann nur das Team selbst einschätzen).
         </aside>
       </section>
 
       <!-- ============================================================ -->
-      <!-- 12. ERGEBNISSE & MEILENSTEINE — 0:50 -->
+      <!-- 12. ERGEBNISSE & MEILENSTEINE
       <!-- ============================================================ -->
       <section>
-        <div class="timebox">0:50</div>
         <p class="kicker">Ergebnisse</p>
         <h2>Was tatsächlich steht</h2>
         <div class="card-grid cols-4">
           <div class="card fragment fade-up"><h3>25</h3><p>API-Endpunkte</p></div>
           <div class="card fragment fade-up"><h3>25 / 25</h3><p>automatisierte Tests grün</p></div>
           <div class="card fragment fade-up"><h3>8</h3><p>Frontend-Seiten</p></div>
-          <div class="card fragment fade-up"><h3>5</h3><p>DB-Tabellen</p></div>
+          <div class="card fragment fade-up"><h3>13</h3><p>Terraform-Dateien</p></div>
         </div>
         <ul class="stack-tight" style="margin-top:1em;">
           <li class="fragment fade-up">Vollständige Auth: Registrierung, Login, Logout, Passwort ändern</li>
           <li class="fragment fade-up">Komplettes AWS-Deployment via Terraform + GitHub Actions</li>
-          <li class="fragment fade-up">8 Release-Stände (0.0.1 → 0.2.3), seither weitere Entwicklung</li>
+          <li class="fragment fade-up">Automatisierte Tagesreports: Lambda + EventBridge + SES</li>
+          <li class="fragment fade-up">8 Release-Stände (0.0.1 → 0.3.0)</li>
         </ul>
         <aside class="notes">
-          Zeitbudget: 0:50 Min.<br>
-          Alle Zahlen sind direkt nachzählbar (Router-Endpunkte, Testläufe, Komponenten) – nicht geschätzt. Kurz auf Screenshot/Test-Output verweisen falls Frage danach kommt.
+          Alle Zahlen sind direkt nachzählbar (Router-Endpunkte, Testläufe, Terraform-Dateien) – nicht geschätzt. Kurz auf Screenshot/Test-Output verweisen falls Frage danach kommt.<br>
+          Bei der Terraform-Zahl kurz erwähnen: 3 Dateien kamen durch die Automation dazu (lambda.tf, eventbridge.tf, ses.tf).
         </aside>
       </section>
 
       <!-- ============================================================ -->
-      <!-- 13. AUSBLICK — 0:25 -->
+      <!-- 13. AUSBLICK 
       <!-- ============================================================ -->
       <section>
-        <div class="timebox">0:25</div>
         <p class="kicker">Ausblick</p>
         <h2>Was als Nächstes ansteht</h2>
         <ul class="stack-tight">
-          <li class="fragment fade-up">E-Mail-Verifizierung &amp; Passwort-Reset per Mail (aktuell bewusst nicht umgesetzt, Architektur ist dafür vorbereitet)</li>
-          <li class="fragment fade-up"><span class="tbd">BITTE ERGÄNZEN</span> weitere geplante Features laut Team-Roadmap</li>
+          <li class="fragment fade-up">Mail-Infrastruktur (SES) existiert bereits für Automation-Report. E-Mail-Verifizierung &amp; Passwort-Reset könnten darauf aufbauen</li>
+          <li class="fragment fade-up">Mit Route 53 Domain holen</li>
+         
+          <li class="fragment fade-up">weitere geplante Features laut Team-Roadmap</li>
         </ul>
         <aside class="notes">
-          Zeitbudget: 0:25 Min.<br>
-          Der Mail-Punkt ist dokumentiert (README, Abschnitt "Aktuelle Einschränkungen") – bewusste Entscheidung, kein technisches Versäumnis. Weitere Roadmap-Punkte vorher ergänzen, falls es dazu bereits Absprachen im Team gibt.
+          Wichtige Nuance: SES ist aktuell nur für die Automation-Mails eingerichtet (Sender/Empfänger müssen einzeln in SES verifiziert werden, Sandbox-Modus). Für Auth-Mails wäre das derselbe Baustein, aber noch nicht verdrahtet — bewusste Entscheidung, kein technisches Versäumnis (siehe README, Abschnitt "Aktuelle Einschränkungen"). Weitere Roadmap-Punkte vorher ergänzen, falls es dazu bereits Absprachen im Team gibt.
         </aside>
       </section>
 
       <!-- ============================================================ -->
-      <!-- 14. FEEDBACK & FRAGEN — 0:15 -->
+      <!-- 14. FEEDBACK & FRAGEN
       <!-- ============================================================ -->
       <section>
         <div class="title-slide">
@@ -550,13 +577,12 @@ command.upgrade(alembic_cfg, "head")
           <p class="subtitle">Was würdet ihr anders machen? Was fehlt euch noch?</p>
         </div>
         <aside class="notes">
-          Zeitbudget: 0:15 Min.<br>
           Aktiv um Feedback bitten, nicht nur "habt ihr Fragen" fragen. Beispiel: "Wir sind besonders gespannt auf euer Feedback zur Auth-Umsetzung und zum Deployment."
         </aside>
       </section>
 
       <!-- ============================================================ -->
-      <!-- 15. ABSCHLUSSFOLIE — 0:15 -->
+      <!-- 15. ABSCHLUSSFOLIE 
       <!-- ============================================================ -->
       <section data-corner-logo="hide">
         <div class="title-slide">
@@ -564,14 +590,12 @@ command.upgrade(alembic_cfg, "head")
             <span class="logo-mark">B</span>
             <span class="brand">Bewerbungssammler</span>
           </div>
-          <h1>Danke!</h1>
+          <h1>Danke und Tüdelü!</h1>
           <p class="subtitle">github.com/ChrissieChrossie/Bewerbungssammler</p>
           <div class="meta">
-            <div><strong><span class="tbd">BITTE ERGÄNZEN</span></strong>Kontakt</div>
           </div>
         </div>
         <aside class="notes">
-          Zeitbudget: 0:15 Min.<br>
           Kurz und freundlich abschließen. Repo-Link ist real (git remote), Kontakt-Feld vorher ausfüllen falls gewünscht.
         </aside>
       </section>
