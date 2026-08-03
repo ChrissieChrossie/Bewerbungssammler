@@ -1,0 +1,9 @@
+# Laufzeit-Abhängigkeiten für die Automation-Lambda (Backend/automation/).
+# Bewusst schlanker als requirements.txt: die Lambda ist ein Batch-Job
+# (DB lesen, Mail via SES versenden), kein Webserver -- fastapi/uvicorn/
+# pydantic werden vom Import-Pfad database.py -> models -> automation.*
+# nicht gebraucht.
+sqlalchemy==2.0.35
+psycopg2-binary==2.9.9
+python-dotenv==1.0.1
+boto3==1.35.0
