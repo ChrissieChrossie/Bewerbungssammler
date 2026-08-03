@@ -10,8 +10,6 @@ data "aws_subnets" "default" {
   }
 }
 
-data "aws_caller_identity" "current" {}
-
 resource "aws_db_subnet_group" "this" {
   name       = "${var.project_name}-db-subnet-group"
   subnet_ids = data.aws_subnets.default.ids
