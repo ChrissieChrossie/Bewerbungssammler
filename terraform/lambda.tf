@@ -12,7 +12,7 @@
 # ============================================================================
 
 resource "aws_iam_role" "automation_lambda" {
-  name               = "${var.project_name}-automation-lambda-role"
+  name = "${var.project_name}-automation-lambda-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [

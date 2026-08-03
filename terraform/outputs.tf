@@ -86,12 +86,12 @@ output "ses_recipient_email" {
 output "automation_summary" {
   description = "Zusammenfassung der Automation-Konfiguration"
   value = {
-    enabled             = var.automation_enabled
-    schedule_hour_utc   = var.automation_schedule_hour
-    days_open_critical  = var.automation_days_open_critical
-    days_in_progress    = var.automation_days_in_progress_warning
-    sender_email        = aws_ses_email_identity.automation_sender.email
-    recipient_email     = aws_ses_email_identity.automation_recipient.email
-    lambda_log_group    = aws_cloudwatch_log_group.automation_lambda.name
+    enabled            = var.automation_enabled
+    schedule_hour_utc  = var.automation_schedule_hour
+    days_open_critical = var.automation_days_open_critical
+    days_in_progress   = var.automation_days_in_progress_warning
+    sender_email       = aws_ses_email_identity.automation_sender.email
+    recipient_email    = aws_ses_email_identity.automation_recipient.email
+    lambda_log_group   = aws_cloudwatch_log_group.automation_lambda.name
   }
 }
