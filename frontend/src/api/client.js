@@ -6,7 +6,9 @@ const client = axios.create({
   baseURL: API_BASE,
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  // Auth-Cookies (HttpOnly) müssen bei jedem Request mitgeschickt werden.
+  withCredentials: true
 })
 
 export const applicationApi = {
@@ -39,6 +41,14 @@ export const userApi = {
   create: (data) => client.post('/users/', data),
   update: (id, data) => client.put(`/users/${id}`, data),
   delete: (id) => client.delete(`/users/${id}`)
+}
+
+export const authApi = {
+  register: (data) => client.post('/auth/register', data),
+  login: (data) => client.post('/auth/login', data),
+  logout: () => client.post('/auth/logout'),
+  me: () => client.get('/auth/me'),
+  changePassword: (data) => client.post('/auth/change-password', data)
 }
 
 export default client

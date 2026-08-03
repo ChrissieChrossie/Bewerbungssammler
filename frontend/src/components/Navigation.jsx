@@ -1,11 +1,18 @@
 import { NavLink } from 'react-router-dom'
-import { HomeIcon, ClipboardDocumentListIcon, BuildingOffice2Icon, BriefcaseIcon } from '@heroicons/react/24/outline'
+import {
+  HomeIcon,
+  ClipboardDocumentListIcon,
+  BuildingOffice2Icon,
+  BriefcaseIcon,
+  Cog6ToothIcon
+} from '@heroicons/react/24/outline'
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: HomeIcon, end: true },
   { to: '/dashboard/applications', label: 'Bewerbungen', icon: ClipboardDocumentListIcon },
   { to: '/dashboard/companies', label: 'Unternehmen', icon: BuildingOffice2Icon },
   { to: '/dashboard/job-postings', label: 'Stellenausschreibungen', icon: BriefcaseIcon },
+  { to: '/dashboard/settings', label: 'Einstellungen', icon: Cog6ToothIcon },
 ]
 
 export default function Navigation() {
