@@ -5,6 +5,7 @@ const labels = {
   applications: 'Bewerbungen',
   companies: 'Unternehmen',
   'job-postings': 'Stellenausschreibungen',
+  settings: 'Einstellungen',
 }
 
 export default function Breadcrumbs() {

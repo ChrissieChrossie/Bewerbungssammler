@@ -35,10 +35,11 @@ export const jobPostingApi = {
   delete: (id) => client.delete(`/job-postings/${id}`)
 }
 
+// Liefert/ändert ausschließlich den eigenen Account (siehe Backend/routers/users.py).
+// Neue Accounts entstehen ausschließlich über authApi.register.
 export const userApi = {
   getAll: () => client.get('/users/'),
   getById: (id) => client.get(`/users/${id}`),
-  create: (data) => client.post('/users/', data),
   update: (id, data) => client.put(`/users/${id}`, data),
   delete: (id) => client.delete(`/users/${id}`)
 }
