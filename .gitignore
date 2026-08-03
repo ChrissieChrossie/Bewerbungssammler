@@ -9,6 +9,10 @@ obj/
 Thumbs.db
 .DS_Store
 
+# Python (Backend, geschrieben vom Hot-Reload-Bind-Mount in docker-compose.yml)
+__pycache__/
+*.pyc
+
 # Terraform
 terraform/**/.terraform/
 terraform/**/*.tfstate
