@@ -302,6 +302,25 @@
 .corner-logo span { color: #fff; font-weight: 700; font-size: 0.85em; }
 body.hide-corner-logo .corner-logo { display: none; }
 
+.corner-frog {
+  position: absolute;
+  bottom: 1.2em;
+  right: 1.4em;
+  width: 130px;
+  height: auto;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.4));
+}
+
+.corner-frog-caption {
+  position: absolute;
+  bottom: 0.3em;     
+  right: 1.4em;        
+  width: 130px;       
+  text-align: center;
+  font-size: 0.4em;
+  color: #fff;
+}
+
 /* ============ Screenshots ============ */
 
 .browser-frame {
