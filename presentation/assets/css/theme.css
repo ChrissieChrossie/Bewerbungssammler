@@ -1,0 +1,462 @@
+/*
+ * Bewerbungssammler – reveal.js Theme
+ *
+ * Alle Farb-, Radius- und Schatten-Werte 1:1 aus dem Produkt-Frontend übernommen:
+ * frontend/tailwind.config.js + frontend/src/index.css (CSS-Variablen dort gespiegelt).
+ * Schriftart: identischer System-Font-Stack wie im Produkt (keine Web-Font-Ladezeit,
+ * funktioniert offline).
+ */
+
+:root {
+  /* --- 1:1 aus frontend/src/index.css --- */
+  --color-primary: #7c3aed;         /* violet-600 */
+  --color-primary-hover: #8b5cf6;   /* violet-500 */
+  --color-primary-active: #6d28d9;  /* violet-700 */
+  --color-secondary: #d946ef;       /* fuchsia-500 */
+  --color-accent: #f59e0b;          /* amber-500 */
+  --color-danger: #ef4444;
+  --color-text: #111827;            /* gray-900 */
+  --color-text-muted: #4b5563;      /* gray-600 */
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+
+  /* --- Tailwind-Default-Paletten-Werte, wie sie im Frontend direkt genutzt werden --- */
+  --violet-950: #2e1065;
+  --purple-900: #581c87;
+  --fuchsia-900: #701a75;
+  --fuchsia-600: #c026d3;
+  --fuchsia-500: #d946ef;
+  --violet-100: #ede9fe;
+  --fuchsia-100: #fae8ff;
+  --violet-200: #ddd6fe;
+  --indigo-500: #6366f1;
+  --amber-400: #fbbf24;
+  --orange-500: #f97316;
+  --emerald-400: #34d399;
+  --emerald-500: #10b981;
+  --teal-500: #14b8a6;
+  --gray-50: #f9fafb;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-600: #4b5563;
+  --gray-900: #111827;
+
+  --shadow-glow: 0 8px 24px -4px rgba(124, 58, 237, 0.35);
+  --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* ============ Grundgerüst ============ */
+
+.reveal {
+  font-family: var(--font-stack);
+  color: var(--gray-900);
+  font-size: 32px;
+}
+
+.reveal .slides section {
+  text-align: left;
+  height: 100%;
+}
+
+/* Jede Folie: dunkler Gradient-Hintergrund wie die Hero-Bereiche des Produkts
+   (Login/Signup/Landing: from-violet-950 via-purple-900 to-fuchsia-900),
+   Inhalte liegen auf hellen "Card"-Flächen darüber -- exakt die Produkt-Optik. */
+.reveal .slide-background-content {
+  background: radial-gradient(circle at 85% -10%, rgba(217, 70, 239, 0.35), transparent 45%),
+    radial-gradient(circle at -10% 90%, rgba(99, 102, 241, 0.25), transparent 40%),
+    linear-gradient(135deg, var(--violet-950) 0%, var(--purple-900) 55%, var(--fuchsia-900) 100%);
+}
+
+/* Dezente geometrische Formen im Hintergrund, wie die "Blob"-Kreise im Produkt */
+.reveal .slide-background::before,
+.reveal .slide-background::after {
+  content: '';
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+  filter: blur(60px);
+}
+.reveal .slide-background::before {
+  width: 420px;
+  height: 420px;
+  top: -140px;
+  right: -80px;
+  background: rgba(217, 70, 239, 0.28);
+}
+.reveal .slide-background::after {
+  width: 380px;
+  height: 380px;
+  bottom: -160px;
+  left: 10%;
+  background: rgba(99, 102, 241, 0.2);
+}
+
+/* ============ Typografie ============ */
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4 {
+  font-weight: 900; /* font-black, wie im Produkt */
+  letter-spacing: -0.02em; /* tracking-tight */
+  color: #fff;
+  text-transform: none;
+  margin-bottom: 0.5em;
+  line-height: 1.1;
+}
+
+.reveal h1 { font-size: 2.4em; }
+.reveal h2 { font-size: 1.7em; }
+.reveal h3 { font-size: 1.25em; }
+
+.reveal .eyebrow {
+  display: inline-block;
+  padding: 0.35em 1em;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--violet-200);
+  font-size: 0.5em;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.6em;
+}
+
+.reveal p,
+.reveal li {
+  color: var(--violet-200);
+  font-size: 0.72em;
+  line-height: 1.5;
+}
+
+.reveal .subtitle {
+  color: var(--violet-200);
+  font-size: 0.6em;
+  font-weight: 400;
+  margin-bottom: 1em;
+}
+
+.reveal strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.reveal a {
+  color: var(--fuchsia-500);
+  text-decoration: underline;
+}
+
+/* Fließtext-Verbot: Bullet-Listen statt Absätzen */
+.reveal ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.reveal ul li {
+  position: relative;
+  padding-left: 1.4em;
+  margin-bottom: 0.5em;
+}
+.reveal ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--color-primary), var(--fuchsia-500));
+}
+
+/* ============ Karten (1:1 .card / .card-lg aus dem Produkt) ============ */
+
+.card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  padding: 1.1em 1.3em;
+  color: var(--gray-900);
+}
+
+.card h3 {
+  color: var(--gray-900);
+  font-size: 1.05em;
+  margin-bottom: 0.3em;
+}
+
+.card p,
+.card li {
+  color: var(--gray-600);
+  font-size: 0.65em;
+}
+
+.card .icon-box {
+  width: 2.4em;
+  height: 2.4em;
+  border-radius: 0.9em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3em;
+  margin-bottom: 0.5em;
+  background: linear-gradient(135deg, var(--violet-100), var(--fuchsia-100));
+}
+
+.card-grid {
+  display: grid;
+  gap: 0.9em;
+  margin-top: 0.8em;
+}
+.card-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.card-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.card-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* Glassmorphism-Variante für Karten direkt auf dem dunklen Gradient */
+.card-glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-lg);
+  padding: 1em 1.2em;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+.card-glass h3 { color: #fff; }
+.card-glass p, .card-glass li { color: var(--violet-200); }
+
+/* ============ Badges / Tags (1:1 .badge aus dem Produkt) ============ */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3em 0.9em;
+  border-radius: 999px;
+  font-size: 0.5em;
+  font-weight: 600;
+  gap: 0.4em;
+}
+.badge-violet { background: rgba(124, 58, 237, 0.15); color: #c4b5fd; border: 1px solid rgba(124, 58, 237, 0.35); }
+.badge-green  { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.35); }
+.badge-red    { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.35); }
+.badge-amber  { background: rgba(245, 158, 11, 0.15); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.35); }
+
+/* ============ Buttons (1:1 .btn-primary aus dem Produkt) ============ */
+
+.btn {
+  display: inline-block;
+  padding: 0.5em 1.3em;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.55em;
+  color: #fff;
+  background: linear-gradient(90deg, var(--color-primary), var(--fuchsia-600));
+  box-shadow: var(--shadow-glow);
+}
+
+/* ============ Logo (1:1 das "B"-Icon aus dem Header) ============ */
+
+.logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6em;
+  height: 1.6em;
+  border-radius: 0.5em;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1em;
+  backdrop-filter: blur(6px);
+}
+
+.logo-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-bottom: 1.4em;
+}
+.logo-row .brand {
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.55em;
+  letter-spacing: -0.01em;
+}
+
+.corner-logo {
+  position: fixed;
+  top: 0.6em;
+  left: 0.7em;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  opacity: 0.55;
+  z-index: 5;
+  font-size: 14px;
+}
+.corner-logo .logo-mark { width: 1.5em; height: 1.5em; font-size: 0.85em; }
+.corner-logo span { color: #fff; font-weight: 700; font-size: 0.85em; }
+body.hide-corner-logo .corner-logo { display: none; }
+
+/* ============ Screenshots ============ */
+
+.browser-frame {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #1f1533;
+}
+.browser-frame .chrome {
+  display: flex;
+  gap: 0.4em;
+  padding: 0.55em 0.7em;
+  background: #150f24;
+}
+.browser-frame .chrome span {
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 999px;
+  background: #4b5563;
+}
+.browser-frame img {
+  display: block;
+  width: 100%;
+}
+
+/* ============ Layout-Helfer ============ */
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.6em;
+  align-items: start;
+}
+
+.stack-tight > * + * { margin-top: 0.5em; }
+
+.text-center { text-align: center; }
+.text-muted { color: var(--violet-200) !important; }
+.mt-0 { margin-top: 0 !important; }
+
+.pill-step {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  margin-bottom: 0.55em;
+}
+.pill-step .num {
+  flex-shrink: 0;
+  width: 1.6em;
+  height: 1.6em;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--color-primary), var(--fuchsia-500));
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.55em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pill-step .label { font-size: 0.65em; color: var(--violet-200); }
+
+/* Platzhalter-Markierung: [BITTE ERGÄNZEN] */
+.tbd {
+  display: inline-block;
+  padding: 0.15em 0.6em;
+  border-radius: 0.4em;
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px dashed var(--amber-400);
+  color: var(--amber-400);
+  font-size: 0.85em;
+  font-weight: 700;
+}
+
+/* ============ Diagramme (SVG) ============ */
+
+.diagram-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.4em;
+}
+.diagram-wrap svg { width: 100%; height: auto; max-height: 62vh; }
+
+.diagram-wrap .layer-dim { opacity: 0.35; transition: opacity 400ms ease, filter 400ms ease; }
+.diagram-wrap .layer-active { opacity: 1; }
+.diagram-wrap .box-highlight {
+  filter: drop-shadow(0 0 14px rgba(217, 70, 239, 0.85));
+}
+
+/* ============ Code-Snippets ============ */
+
+.reveal pre {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  width: 100%;
+}
+.reveal pre code {
+  font-size: 0.62em;
+  max-height: 46vh;
+  padding: 0.9em 1.1em;
+}
+.code-caption {
+  font-size: 0.5em;
+  color: var(--violet-200);
+  margin-top: 0.5em;
+}
+
+/* ============ Footer-Kicker (Slide-Titel klein oben) ============ */
+
+.kicker {
+  font-size: 0.42em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fuchsia-500);
+  font-weight: 700;
+  margin-bottom: 0.4em;
+}
+
+/* ============ Titel- & Schlussfolie ============ */
+
+.title-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  height: 100%;
+}
+.title-slide h1 { font-size: 2.6em; }
+.title-slide .meta {
+  margin-top: 1.6em;
+  display: flex;
+  gap: 2.2em;
+  font-size: 0.5em;
+  color: var(--violet-200);
+}
+.title-slide .meta strong { display: block; color: #fff; font-size: 1.1em; margin-bottom: 0.2em; }
+
+/* ============ Fortschrittsbalken / Controls im Markenstil ============ */
+
+.reveal .progress {
+  color: var(--fuchsia-500);
+  height: 5px;
+}
+.reveal .controls {
+  color: var(--color-primary-hover);
+}
+
+/* ============ Speaker-Notes Zeitbudget-Badge ============ */
+
+.timebox {
+  position: absolute;
+  top: 0.6em;
+  right: 0.8em;
+  font-size: 0.4em;
+  color: var(--violet-200);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 0.3em 0.8em;
+  border-radius: 999px;
+}

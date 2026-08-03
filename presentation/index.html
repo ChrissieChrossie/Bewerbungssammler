@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bewerbungssammler – Praxisphase 2</title>
+
+  <link rel="stylesheet" href="vendor/reveal.js/dist/reset.css" />
+  <link rel="stylesheet" href="vendor/reveal.js/dist/reveal.css" />
+  <link rel="stylesheet" href="vendor/reveal.js/plugin/highlight/monokai.css" />
+  <link rel="stylesheet" href="assets/css/theme.css" />
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ============================================================ -->
+      <!-- 1. TITELFOLIE — 0:15 -->
+      <!-- ============================================================ -->
+      <section data-corner-logo="hide">
+        <div class="title-slide">
+          <div class="logo-row">
+            <span class="logo-mark">B</span>
+            <span class="brand">Bewerbungssammler</span>
+          </div>
+          <span class="eyebrow">Praxisphase 2 · Projektphase 2</span>
+          <h1>Bewerbungssammler</h1>
+          <p class="subtitle">Bewerbungen, Unternehmen &amp; Stellenausschreibungen an einem Ort</p>
+          <div class="meta">
+            <div><strong><span class="tbd">BITTE ERGÄNZEN</span></strong>Präsentierende</div>
+            <div><strong><span class="tbd">BITTE ERGÄNZEN</span></strong>Datum</div>
+          </div>
+        </div>
+        <aside class="notes">
+          Zeitbudget: 15 Sek.<br>
+          Kurz begrüßen, Projektname nennen, direkt zur Agenda überleiten. Ausformulierter Einstieg:
+          "Hallo zusammen, wir zeigen euch heute den Bewerbungssammler – unser Projekt aus Praxisphase 2."
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 2. AGENDA — 0:15 -->
+      <!-- ============================================================ -->
+      <section>
+        <div class="timebox">0:15</div>
+        <p class="kicker">Agenda</p>
+        <h2>Was euch erwartet</h2>
+        <div class="card-grid cols-4">
+          <div class="card fragment fade-up"><h3>01–03</h3><p>Problem, Architektur, Tech-Stack</p></div>
+          <div class="card fragment fade-up"><h3>04–07</h3><p>Datenbank, Features, Live-Demo</p></div>
+          <div class="card fragment fade-up"><h3>08–10</h3><p>Code-Highlights, Herausforderungen</p></div>
+          <div class="card fragment fade-up"><h3>11–15</h3><p>Ergebnisse, Ausblick, Fragen</p></div>
+        </div>
+        <aside class="notes">
+          Zeitbudget: 15 Sek.<br>
+          Nur grob überfliegen, nicht jede Kachel einzeln vorlesen. Ein Satz: "Wir starten beim Problem, gehen über Architektur und Live-Demo bis zu Ergebnissen und Ausblick."
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 3. EINFÜHRUNG / PROBLEMSTELLUNG — 1:05 -->
+      <!-- ============================================================ -->
+      <section>
+        <div class="timebox">1:05</div>
+        <p class="kicker">Einführung</p>
+        <h2>Das Problem: Excel-Chaos im Bewerbungsprozess</h2>
+        <div class="two-col">
+          <div class="card-glass fragment fade-up">
+            <h3>Ausgangslage</h3>
+            <ul>
+              <li>Bewerbungen verteilt auf Excel-Tabs</li>
+              <li>Status, Notizen, Termine schnell unübersichtlich</li>
+              <li>Kein zentraler Blick auf offene Prozesse</li>
+            </ul>
+          </div>
+          <div class="card-glass fragment fade-up">
+            <h3>Zielgruppe</h3>
+            <ul>
+              <li>Jobsuchende mit mehreren parallelen Bewerbungen</li>
+              <li>Wunsch nach eigener Kontrolle über die Daten</li>
+              <li>Kostenlos, selbst hostbar (Docker oder AWS)</li>
+            </ul>
+          </div>
+        </div>
+        <p class="fragment fade-up" style="margin-top:0.9em; font-size:0.65em;">
+          Ziel der Projektphase: <span class="tbd">BITTE ERGÄNZEN – offizieller Auftrag/Scope laut Kursvorgabe</span>
+        </p>
+        <aside class="notes">
+          Zeitbudget: 1:05 Min.<br>
+          • Aus README zitieren: "Excel-Tabelle mit 47 Tabs, in der irgendwo der Überblick verloren geht"<br>
+          • Zielgruppe: alle, die aktiv mehrere Bewerbungen gleichzeitig verfolgen<br>
+          • Fachbegriff-Erklärung falls gefragt: "Self-hosting" = die Anwendung läuft auf eigener Infrastruktur statt bei einem fremden Anbieter<br>
+          • Den [BITTE ERGÄNZEN]-Punkt vorher durch den offiziellen Praxisphasen-Auftrag ersetzen.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 4. ARCHITEKTUR-ÜBERBLICK — 1:30 -->
+      <!-- ============================================================ -->
+      <section>
+        <div class="timebox">1:30</div>
+        <p class="kicker">Architektur</p>
+        <h2>Frontend ↔ Backend ↔ Datenbank</h2>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 1000 470" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#d946ef" />
+              </marker>
+              <linearGradient id="boxGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.12" />
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.04" />
+              </linearGradient>
+            </defs>
+
+            <!-- Browser -->
+            <rect x="370" y="10" width="260" height="64" rx="12" fill="url(#boxGrad)" stroke="#ffffff" stroke-opacity="0.3"/>
+            <circle cx="392" cy="28" r="3.5" fill="#f87171"/>
+            <circle cx="404" cy="28" r="3.5" fill="#fbbf24"/>
+            <circle cx="416" cy="28" r="3.5" fill="#34d399"/>
+            <text x="500" y="52" text-anchor="middle" fill="#ffffff" font-size="20" font-weight="700">Browser (React-SPA)</text>
+
+            <line x1="500" y1="74" x2="500" y2="112" stroke="#d946ef" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+            <!-- Docker Compose boundary -->
+            <rect x="40" y="112" width="920" height="300" rx="16" fill="none" stroke="#c4b5fd" stroke-width="2" stroke-dasharray="8 6"/>
+            <text x="60" y="140" fill="#c4b5fd" font-size="16" font-weight="700">Docker Compose · lokale Entwicklung</text>
+
+            <!-- Frontend box -->
+            <rect x="90" y="165" width="250" height="200" rx="14" fill="url(#boxGrad)" stroke="#d946ef" stroke-width="2"/>
+            <text x="215" y="200" text-anchor="middle" fill="#ffffff" font-size="19" font-weight="800">Frontend</text>
+            <text x="215" y="228" text-anchor="middle" fill="#e9d5ff" font-size="14">React 18 · Vite 5 · Tailwind 3</text>
+            <text x="215" y="252" text-anchor="middle" fill="#e9d5ff" font-size="14">Port 5173</text>
+            <text x="215" y="284" text-anchor="middle" fill="#f0abfc" font-size="13">Vite-Dev-Proxy → /api</text>
+            <text x="215" y="308" text-anchor="middle" fill="#f0abfc" font-size="13">Hot-Reload via Bind-Mount</text>
+
+            <!-- Backend box -->
+            <rect x="380" y="165" width="250" height="200" rx="14" fill="url(#boxGrad)" stroke="#d946ef" stroke-width="2"/>
+            <text x="505" y="200" text-anchor="middle" fill="#ffffff" font-size="19" font-weight="800">Backend</text>
+            <text x="505" y="228" text-anchor="middle" fill="#e9d5ff" font-size="14">FastAPI · SQLAlchemy 2</text>
+            <text x="505" y="252" text-anchor="middle" fill="#e9d5ff" font-size="14">Port 8000</text>
+            <text x="505" y="284" text-anchor="middle" fill="#f0abfc" font-size="13">JWT in HttpOnly-Cookies</text>
+            <text x="505" y="308" text-anchor="middle" fill="#f0abfc" font-size="13">Alembic-Migrationen beim Start</text>
+
+            <!-- DB box -->
+            <rect x="670" y="165" width="250" height="200" rx="14" fill="url(#boxGrad)" stroke="#d946ef" stroke-width="2"/>
+            <text x="795" y="200" text-anchor="middle" fill="#ffffff" font-size="19" font-weight="800">Datenbank</text>
+            <text x="795" y="228" text-anchor="middle" fill="#e9d5ff" font-size="14">PostgreSQL 16</text>
+            <text x="795" y="252" text-anchor="middle" fill="#e9d5ff" font-size="14">Port 5432</text>
+            <text x="795" y="284" text-anchor="middle" fill="#f0abfc" font-size="13">Named Volume</text>
+            <text x="795" y="308" text-anchor="middle" fill="#f0abfc" font-size="13">(Daten überleben Neustarts)</text>
+
+            <!-- Arrows between boxes -->
+            <line x1="340" y1="245" x2="378" y2="245" stroke="#d946ef" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <text x="359" y="230" text-anchor="middle" fill="#f0abfc" font-size="12">REST</text>
+
+            <line x1="630" y1="245" x2="668" y2="245" stroke="#d946ef" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <text x="649" y="230" text-anchor="middle" fill="#f0abfc" font-size="12">SQL</text>
+
+            <path d="M 380 300 C 355 330, 355 330, 342 300" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#arrow)"/>
+            <text x="360" y="345" text-anchor="middle" fill="#c4b5fd" font-size="12">Auth-Cookie</text>
+          </svg>
+        </div>
+        <p class="fragment fade-up" style="text-align:center; margin-top:0.4em; font-size:0.55em;">
+          Produktion: gleiche Struktur — CloudFront + S3 · App Runner · RDS (Terraform-verwaltet)
+        </p>
+        <aside class="notes">
+          Zeitbudget: 1:30 Min.<br>
+          • Von oben nach unten erklären: Browser lädt die React-SPA, die über den Vite-Proxy /api-Aufrufe ans Backend schickt<br>
+          • Backend spricht per SQLAlchemy mit Postgres, Alembic hält das Schema versioniert<br>
+          • Fachbegriff: "Vite-Dev-Proxy" = leitet Anfragen an /api im Hintergrund ans Backend weiter, damit Frontend und Backend im Browser wie eine einzige Adresse wirken<br>
+          • Auth-Cookie-Pfeil kurz erwähnen: Login setzt ein HttpOnly-Cookie, das der Browser automatisch mitschickt<br>
+          • Zoom-Plugin: bei Bedarf mit Alt+Klick in einzelne Boxen hineinzoomen, wenn Rückfragen zu einer Schicht kommen<br>
+          • Letzter Satz zur Produktion nicht vertiefen, nur kurz erwähnen (Verweis auf Terraform).
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 5. TECH-STACK — 0:40 -->
+      <!-- ============================================================ -->
+      <section>
+        <div class="timebox">0:40</div>
+        <p class="kicker">Tech-Stack</p>
+        <h2>Bewusst schlank gehalten</h2>
+        <div class="card-grid cols-4">
+          <div class="card fragment fade-up">
+            <h3>React 18 + Vite 5</h3>
+            <p>Schneller Dev-Server mit Hot-Reload, kein Build-Warten während der Entwicklung.</p>
+          </div>
+          <div class="card fragment fade-up">
+            <h3>FastAPI</h3>
+            <p>Automatische OpenAPI-Doku unter <code>/docs</code>, async-fähig, wenig Boilerplate.</p>
+          </div>
+          <div class="card fragment fade-up">
+            <h3>PostgreSQL / SQLite</h3>
+            <p>Postgres in Docker = identisch zur Produktions-DB; SQLite lokal ganz ohne Setup.</p>
+          </div>
+          <div class="card fragment fade-up">
+            <h3>Docker + Terraform</h3>
+            <p>Lokale Entwicklung reproduzierbar, AWS-Infrastruktur als Code.</p>
+          </div>
+        </div>
+        <aside class="notes">
+          Zeitbudget: 0:40 Min.<br>
+          Pro Karte höchstens einen Satz sagen, nicht vorlesen. FastAPI kurz einordnen: "Python-Framework, spezialisiert auf REST-APIs, ähnlich zu Express bei Node.js, nur mit eingebauter Validierung."<br>
+          Falls Zeit fehlt: diese Folie im Zweifel kürzen, nicht die Demo.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 6. DATENBANKSTRUKTUR — 0:40 -->
+      <!-- ============================================================ -->
+      <section>
+        <div class="timebox">0:40</div>
+        <p class="kicker">Datenbankstruktur</p>
+        <h2>5 Tabellen, klar verknüpft</h2>
+        <div class="diagram-wrap">
+          <svg viewBox="0 0 1040 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M0,0 L10,5 L0,10 z" fill="#c4b5fd" />
+              </marker>
+            </defs>
+
+            <!-- companies -->
+            <g class="fragment fade-up">
+              <rect x="30" y="20" width="210" height="96" rx="10" fill="#1f1533" stroke="#d946ef" stroke-width="1.5"/>
+              <rect x="30" y="20" width="210" height="28" rx="10" fill="#d946ef" fill-opacity="0.25"/>
+              <text x="135" y="39" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">companies</text>
+              <text x="45" y="66" fill="#e9d5ff" font-size="12">PK id</text>
+              <text x="45" y="84" fill="#e9d5ff" font-size="12">name</text>
+              <text x="45" y="102" fill="#e9d5ff" font-size="12">homepage</text>
+            </g>
+
+            <!-- job_postings -->
+            <g class="fragment fade-up">
+              <rect x="310" y="20" width="230" height="146" rx="10" fill="#1f1533" stroke="#d946ef" stroke-width="1.5"/>
+              <rect x="310" y="20" width="230" height="28" rx="10" fill="#d946ef" fill-opacity="0.25"/>
+              <text x="425" y="39" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">job_postings</text>
+              <text x="325" y="66" fill="#e9d5ff" font-size="12">PK id</text>
+              <text x="325" y="84" fill="#e9d5ff" font-size="12">title</text>
+              <text x="325" y="102" fill="#e9d5ff" font-size="12">posted_at</text>
+              <text x="325" y="120" fill="#e9d5ff" font-size="12">link</text>
+              <text x="325" y="138" fill="#fcd34d" font-size="12">FK company_id</text>
+            </g>
+
+            <!-- users -->
+            <g class="fragment fade-up">
+              <rect x="30" y="220" width="240" height="186" rx="10" fill="#1f1533" stroke="#f59e0b" stroke-width="1.5"/>
+              <rect x="30" y="220" width="240" height="28" rx="10" fill="#f59e0b" fill-opacity="0.25"/>
+              <text x="150" y="239" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">users</text>
+              <text x="45" y="266" fill="#e9d5ff" font-size="12">PK id</text>
+              <text x="45" y="284" fill="#e9d5ff" font-size="12">username · name</text>
+              <text x="45" y="302" fill="#e9d5ff" font-size="12">email (unique)</text>
+              <text x="45" y="320" fill="#fcd34d" font-size="12">password_hash</text>
+              <text x="45" y="338" fill="#e9d5ff" font-size="12">created_at · updated_at</text>
+              <text x="45" y="356" fill="#e9d5ff" font-size="12">last_login_at</text>
+            </g>
+
+            <!-- applications -->
+            <g class="fragment fade-up">
+              <rect x="330" y="240" width="230" height="166" rx="10" fill="#1f1533" stroke="#d946ef" stroke-width="1.5"/>
+              <rect x="330" y="240" width="230" height="28" rx="10" fill="#d946ef" fill-opacity="0.25"/>
+              <text x="445" y="259" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">applications</text>
+              <text x="345" y="286" fill="#e9d5ff" font-size="12">PK id</text>
+              <text x="345" y="304" fill="#fcd34d" font-size="12">FK user_id</text>
+              <text x="345" y="322" fill="#fcd34d" font-size="12">FK job_posting_id</text>
+              <text x="345" y="340" fill="#e9d5ff" font-size="12">status (Enum)</text>
+              <text x="345" y="358" fill="#e9d5ff" font-size="12">applied_at · note</text>
+            </g>
+
+            <!-- refresh_tokens -->
+            <g class="fragment fade-up">
+              <rect x="650" y="220" width="250" height="186" rx="10" fill="#1f1533" stroke="#f59e0b" stroke-width="1.5"/>
+              <rect x="650" y="220" width="250" height="28" rx="10" fill="#f59e0b" fill-opacity="0.25"/>
+              <text x="775" y="239" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">refresh_tokens</text>
+              <text x="665" y="266" fill="#e9d5ff" font-size="12">PK id</text>
+              <text x="665" y="284" fill="#fcd34d" font-size="12">FK user_id</text>
+              <text x="665" y="302" fill="#e9d5ff" font-size="12">token_hash</text>
+              <text x="665" y="320" fill="#e9d5ff" font-size="12">expires_at · revoked_at</text>
+              <text x="665" y="338" fill="#e9d5ff" font-size="12">remember_me</text>
+            </g>
+
+            <!-- Relations -->
+            <line x1="135" y1="116" x2="220" y2="220" stroke="#c4b5fd" stroke-width="2" marker-end="url(#arrow2)"/>
+            <line x1="425" y1="166" x2="440" y2="238" stroke="#c4b5fd" stroke-width="2" marker-end="url(#arrow2)"/>
+            <line x1="270" y1="300" x2="328" y2="300" stroke="#c4b5fd" stroke-width="2" marker-end="url(#arrow2)"/>
+            <line x1="270" y1="260" x2="648" y2="260" stroke="#c4b5fd" stroke-width="2" marker-end="url(#arrow2)"/>
+          </svg>
+        </div>
+        <aside class="notes">
+          Zeitbudget: 0:40 Min.<br>
+          • Kern-Tabelle: applications, verbindet users und job_postings<br>
+          • users trägt jetzt zusätzlich die Auth-Felder (password_hash, Timestamps)<br>
+          • refresh_tokens ist neu für den Login: jede Sitzung ist einzeln widerrufbar (Logout, Passwortwechsel)<br>
+          • Fachbegriff: "FK" = Foreign Key, eine Spalte die auf die ID einer anderen Tabelle zeigt<br>
+          • Bei Rückfragen mit Zoom-Plugin (Alt+Klick) in die users- oder applications-Box zoomen.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 7. FUNKTIONALITÄTEN — 1:10 -->
+      <!-- ============================================================ -->
+      <section>
+        <div class="timebox">1:10</div>
+        <p class="kicker">Funktionalitäten</p>
+        <h2>Was heute wirklich läuft</h2>
+        <div class="card-grid cols-2">
+          <div class="card fragment fade-up">
+            <div class="browser-frame"><img src="assets/screenshots/dashboard.jpg" alt="Dashboard mit Statistiken" /></div>
+            <h3 style="margin-top:0.5em;">Dashboard mit Live-Statistiken</h3>
+          </div>
+          <div class="card fragment fade-up">
+            <div class="browser-frame"><img src="assets/screenshots/applications.jpg" alt="Bewerbungsliste" /></div>
+            <h3 style="margin-top:0.5em;">Bewerbungen, Unternehmen, Stellen</h3>
+          </div>
+          <div class="card fragment fade-up">
+            <div class="browser-frame"><img src="assets/screenshots/login.jpg" alt="Login-Formular" /></div>
+            <h3 style="margin-top:0.5em;">Registrierung &amp; Login (JWT)</h3>
+          </div>
+          <div class="card fragment fade-up">
+            <div class="browser-frame"><img src="assets/screenshots/settings.jpg" alt="Einstellungen: Passwort ändern" /></div>
+            <h3 style="margin-top:0.5em;">Eigene Daten pro Nutzer</h3>
+          </div>
+        </div>
+        <aside class="notes">
+          Zeitbudget: 1:10 Min.<br>
+          Screenshots sprechen lassen, nicht nacherzählen. Betonen: jeder Nutzer sieht nur seine eigenen Bewerbungen (Backend-seitig durchgesetzt, nicht nur im Frontend versteckt).
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 8. LIVE-DEMO — 3:00 (+ Fallback-Subslide) -->
+      <!-- ============================================================ -->
+      <section>
+        <section>
+          <div class="timebox">3:00</div>
+          <p class="kicker">Live-Demo</p>
+          <h2>Ab hier: echte Anwendung</h2>
+          <div class="pill-step fragment fade-up"><span class="num">1</span><span class="label">Landing-Page → Registrieren</span></div>
+          <div class="pill-step fragment fade-up"><span class="num">2</span><span class="label">Direkt im Dashboard, ohne Freischaltung</span></div>
+          <div class="pill-step fragment fade-up"><span class="num">3</span><span class="label">Neue Bewerbung anlegen</span></div>
+          <div class="pill-step fragment fade-up"><span class="num">4</span><span class="label">Status ändern, Dashboard aktualisiert sich</span></div>
+          <div class="pill-step fragment fade-up"><span class="num">5</span><span class="label">Abmelden → erneut einloggen</span></div>
+          <p class="text-muted" style="margin-top:0.8em; font-size:0.5em;">↓ Fallback-Screenshots, falls die Live-Demo ausfällt</p>
+          <aside class="notes">
+            Zeitbudget: 3:00 Min. — DEMO-SKRIPT (Schritt für Schritt):<br><br>
+            1. Browser öffnen: http://localhost:5173/ (Landing-Page zeigen, kurz auf "Kostenlos &amp; Open Source" hinweisen)<br>
+            2. Klick auf "Jetzt starten" → Signup-Formular<br>
+            3. Ausfüllen: Name "Demo Nutzer", E-Mail "demo@praesentation.de", Passwort "praesentation-2026" (2×) — bewusst live tippen, zeigt Live-Validierung bei zu kurzem Passwort vorher kurz antesten<br>
+            4. Klick "Registrieren" → landet SOFORT im Dashboard (kein "Bitte bestätige deine E-Mail"-Schritt, bewusst betonen: "kein Mailversand nötig, sofort startklar")<br>
+            5. Im Dashboard: die vier Stat-Kacheln zeigen, auf "Bewerbungen" klicken (Kachel ist verlinkt)<br>
+            6. Auf "+ Neue Bewerbung" klicken, Stellenausschreibung auswählen, Datum setzen, Status "Offen", speichern<br>
+            7. Neue Bewerbung erscheint in der Liste → Status-Dropdown auf "Eingeladen" ändern<br>
+            8. Zurück zu "Dashboard" → Kachel "Einladungen" hat sich aktualisiert<br>
+            9. Oben rechts auf "Abmelden" klicken → landet auf Login-Seite<br>
+            10. Mit denselben Zugangsdaten erneut einloggen → wieder im Dashboard, Bewerbung ist noch da (Datenpersistenz)<br><br>
+            FALLBACK: Falls WLAN/Docker/Backend ausfällt, direkt zur nächsten (vertikalen) Folie mit den Screenshots wechseln und den Ablauf anhand der Bilder erzählen statt live zu klicken.
+          </aside>
+        </section>
+        <section data-corner-logo="hide">
+          <p class="kicker">Fallback</p>
+          <h3>Falls die Live-Demo ausfällt</h3>
+          <div class="card-grid cols-4">
+            <div class="browser-frame"><img src="assets/screenshots/landing.jpg" alt="Landing Page" /></div>
+            <div class="browser-frame"><img src="assets/screenshots/signup.jpg" alt="Registrierung" /></div>
+            <div class="browser-frame"><img src="assets/screenshots/dashboard.jpg" alt="Dashboard" /></div>
+            <div class="browser-frame"><img src="assets/screenshots/applications.jpg" alt="Bewerbungen" /></div>
+          </div>
+          <aside class="notes">
+            Kein eigenes Zeitbudget (Fallback). Nur zeigen, wenn die Live-Demo technisch scheitert — anhand der vier Screenshots den gleichen Ablauf (Landing → Registrieren → Dashboard → Bewerbungen) kurz erzählen.
+          </aside>
+        </section>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 9. IMPLEMENTIERUNG – HIGHLIGHTS — 0:50 (+ 2 Subslides) -->
+      <!-- ============================================================ -->
+      <section>
+        <section>
+          <div class="timebox">0:50</div>
+          <p class="kicker">Implementierung</p>
+          <h2>Zwei technische Highlights</h2>
+          <div class="card-grid cols-2">
+            <div class="card fragment fade-up">
+              <h3>🔐 Auth-Flow</h3>
+              <p>JWT-Access-Token + rotierender Refresh-Token, beide in HttpOnly-Cookies.</p>
+            </div>
+            <div class="card fragment fade-up">
+              <h3>🐳 Docker-Setup</h3>
+              <p>Migrationen laufen automatisch beim Start — auch auf bereits bestehenden Datenbanken.</p>
+            </div>
+          </div>
+          <p class="text-muted" style="margin-top:0.8em; font-size:0.5em;">↓ Details je ein Code-Ausschnitt</p>
+          <aside class="notes">
+            Zeitbudget: 0:50 Min. (für alle drei Folien dieses Abschnitts zusammen)<br>
+            Nur ankündigen, Details folgen auf den nächsten (vertikalen) Folien. Falls Zeit knapp wird: diesen Abschnitt ganz überspringen und direkt zu Herausforderungen springen.
+          </aside>
+        </section>
+
+        <section>
+          <p class="kicker">Highlight 1 / 2</p>
+          <h3>Timing-sicherer Login</h3>
+          <pre><code class="language-python" data-trim data-line-numbers>
+# Backend/routers/auth.py
+password_hash = user.password_hash if user else DUMMY_PASSWORD_HASH
+password_valid = PasswordService.verify_password(payload.password, password_hash)
+
+if not user or not password_valid:
+    raise HTTPException(status_code=401, detail=GENERIC_LOGIN_ERROR)
+          </code></pre>
+          <p class="code-caption">Hash-Vergleich läuft immer — auch wenn die E-Mail gar nicht existiert. Verhindert, dass Angreifer per Antwortzeit registrierte E-Mails erraten (“User-Enumeration”).</p>
+          <aside class="notes">
+            Fachbegriff: "Timing-Angriff" = aus winzigen Zeitunterschieden einer Antwort auf interne Daten schließen. Hier: ohne Dummy-Hash wäre die Antwort bei falscher E-Mail schneller als bei falschem Passwort — das allein würde schon verraten, welche E-Mails existieren.
+          </aside>
+        </section>
+
+        <section>
+          <p class="kicker">Highlight 2 / 2</p>
+          <h3>Migrationen, die auf bestehenden DBs nicht crashen</h3>
+          <pre><code class="language-python" data-trim data-line-numbers>
+# Backend/database.py
+if current_revision is None and already_has_tables:
+    command.stamp(alembic_cfg, "0001_baseline")
+
+command.upgrade(alembic_cfg, "head")
+          </code></pre>
+          <p class="code-caption">Alembic kam nachträglich dazu. Erkennt automatisch: "Tabellen existieren schon, aber ohne Migrations-Historie" → markiert den Ausgangszustand, statt ihn erneut anzulegen.</p>
+          <aside class="notes">
+            Fachbegriff: "Migration" = eine versionierte, nachvollziehbare Änderung am Datenbank-Schema (statt manueller SQL-Befehle). "Stamp" = der DB sagen "du bist schon auf diesem Stand", ohne die zugehörigen Befehle nochmal auszuführen.
+          </aside>
+        </section>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 10. HERAUSFORDERUNGEN & LÖSUNGEN — 1:10 -->
+      <!-- ============================================================ -->
+      <section>
+        <div class="timebox">1:10</div>
+        <p class="kicker">Herausforderungen</p>
+        <h2>3 Probleme, 3 Lösungen</h2>
+        <div class="card-grid cols-3">
+          <div class="card fragment fade-up">
+            <h3>❌ Problem</h3>
+            <p>Kein Migrationstool, aber Schema musste sich rückwirkend ändern.</p>
+            <h3 style="margin-top:0.6em;">✅ Lösung</h3>
+            <p>Alembic eingeführt, inkl. automatischer Erkennung bestehender Datenbanken.</p>
+          </div>
+          <div class="card fragment fade-up">
+            <h3>❌ Problem</h3>
+            <p>Login könnte verraten, welche E-Mails registriert sind.</p>
+            <h3 style="margin-top:0.6em;">✅ Lösung</h3>
+            <p>Generische Fehlermeldung + Dummy-Hash-Vergleich, timing-sicher.</p>
+          </div>
+          <div class="card fragment fade-up">
+            <h3>❌ Problem</h3>
+            <p>PowerShell-Skript brach mit kryptischer Fehlermeldung ab.</p>
+            <h3 style="margin-top:0.6em;">✅ Lösung</h3>
+            <p>Ursache gefunden (Fehlerbehandlung), saubere Meldung + Exit-Code.</p>
+          </div>
+        </div>
+        <aside class="notes">
+          Zeitbudget: 1:10 Min.<br>
+          • Problem 1: Bestehende User-Datensätze durften beim Hinzufügen der Passwort-Spalte nicht verloren gehen → Platzhalter-Hash für Altdaten, die dann manuell zurückgesetzt werden müssen<br>
+          • Problem 2: Sicherheitskonzept "User Enumeration" kurz in einem Satz erklären: nach außen darf nicht sichtbar sein, ob eine E-Mail existiert<br>
+          • Problem 3: reale Debugging-Geschichte aus der Docker-Skript-Entwicklung — zeigt Fehlersuche in der Praxis, nicht nur am Reißbrett<br>
+          • Diese drei sind alle direkt am Code/Verlauf nachvollziehbar, keine erfundenen Beispiele.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 11. WAS LIEF GUT / SCHLECHT — 0:45 -->
+      <!-- ============================================================ -->
+      <section>
+        <div class="timebox">0:45</div>
+        <p class="kicker">Retrospektive</p>
+        <h2>Was lief gut, was lief schlecht</h2>
+        <div class="two-col">
+          <div class="card-glass">
+            <h3>👍 Gut</h3>
+            <ul>
+              <li class="fragment fade-up">Klare Architektur von Anfang an</li>
+              <li class="fragment fade-up">25 automatisierte Tests, alle grün</li>
+              <li class="fragment fade-up">CI/CD bis zum AWS-Deployment</li>
+            </ul>
+          </div>
+          <div class="card-glass">
+            <h3>👎 Verbesserungspotenzial</h3>
+            <ul>
+              <li class="fragment fade-up">Migrationstool erst spät eingeführt</li>
+              <li class="fragment fade-up"><span class="tbd">BITTE ERGÄNZEN</span> Team-/Zeitmanagement</li>
+              <li class="fragment fade-up"><span class="tbd">BITTE ERGÄNZEN</span> weiterer Punkt</li>
+            </ul>
+          </div>
+        </div>
+        <aside class="notes">
+          Zeitbudget: 0:45 Min.<br>
+          Ehrlich und konkret bleiben, keine Plattitüden. Die zwei [BITTE ERGÄNZEN]-Punkte vor der Präsentation durch echte Team-Erfahrungen ersetzen (Zeitdruck, Aufgabenverteilung, Kommunikation o.ä. — das kann nur das Team selbst einschätzen).
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 12. ERGEBNISSE & MEILENSTEINE — 0:50 -->
+      <!-- ============================================================ -->
+      <section>
+        <div class="timebox">0:50</div>
+        <p class="kicker">Ergebnisse</p>
+        <h2>Was tatsächlich steht</h2>
+        <div class="card-grid cols-4">
+          <div class="card fragment fade-up"><h3>25</h3><p>API-Endpunkte</p></div>
+          <div class="card fragment fade-up"><h3>25 / 25</h3><p>automatisierte Tests grün</p></div>
+          <div class="card fragment fade-up"><h3>8</h3><p>Frontend-Seiten</p></div>
+          <div class="card fragment fade-up"><h3>5</h3><p>DB-Tabellen</p></div>
+        </div>
+        <ul class="stack-tight" style="margin-top:1em;">
+          <li class="fragment fade-up">Vollständige Auth: Registrierung, Login, Logout, Passwort ändern</li>
+          <li class="fragment fade-up">Komplettes AWS-Deployment via Terraform + GitHub Actions</li>
+          <li class="fragment fade-up">8 Release-Stände (0.0.1 → 0.2.3), seither weitere Entwicklung</li>
+        </ul>
+        <aside class="notes">
+          Zeitbudget: 0:50 Min.<br>
+          Alle Zahlen sind direkt nachzählbar (Router-Endpunkte, Testläufe, Komponenten) – nicht geschätzt. Kurz auf Screenshot/Test-Output verweisen falls Frage danach kommt.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 13. AUSBLICK — 0:25 -->
+      <!-- ============================================================ -->
+      <section>
+        <div class="timebox">0:25</div>
+        <p class="kicker">Ausblick</p>
+        <h2>Was als Nächstes ansteht</h2>
+        <ul class="stack-tight">
+          <li class="fragment fade-up">E-Mail-Verifizierung &amp; Passwort-Reset per Mail (aktuell bewusst nicht umgesetzt, Architektur ist dafür vorbereitet)</li>
+          <li class="fragment fade-up"><span class="tbd">BITTE ERGÄNZEN</span> weitere geplante Features laut Team-Roadmap</li>
+        </ul>
+        <aside class="notes">
+          Zeitbudget: 0:25 Min.<br>
+          Der Mail-Punkt ist dokumentiert (README, Abschnitt "Aktuelle Einschränkungen") – bewusste Entscheidung, kein technisches Versäumnis. Weitere Roadmap-Punkte vorher ergänzen, falls es dazu bereits Absprachen im Team gibt.
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 14. FEEDBACK & FRAGEN — 0:15 -->
+      <!-- ============================================================ -->
+      <section>
+        <div class="title-slide">
+          <p class="eyebrow">Übergang</p>
+          <h2>Feedback &amp; Fragen</h2>
+          <p class="subtitle">Was würdet ihr anders machen? Was fehlt euch noch?</p>
+        </div>
+        <aside class="notes">
+          Zeitbudget: 0:15 Min.<br>
+          Aktiv um Feedback bitten, nicht nur "habt ihr Fragen" fragen. Beispiel: "Wir sind besonders gespannt auf euer Feedback zur Auth-Umsetzung und zum Deployment."
+        </aside>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- 15. ABSCHLUSSFOLIE — 0:15 -->
+      <!-- ============================================================ -->
+      <section data-corner-logo="hide">
+        <div class="title-slide">
+          <div class="logo-row">
+            <span class="logo-mark">B</span>
+            <span class="brand">Bewerbungssammler</span>
+          </div>
+          <h1>Danke!</h1>
+          <p class="subtitle">github.com/ChrissieChrossie/Bewerbungssammler</p>
+          <div class="meta">
+            <div><strong><span class="tbd">BITTE ERGÄNZEN</span></strong>Kontakt</div>
+          </div>
+        </div>
+        <aside class="notes">
+          Zeitbudget: 0:15 Min.<br>
+          Kurz und freundlich abschließen. Repo-Link ist real (git remote), Kontakt-Feld vorher ausfüllen falls gewünscht.
+        </aside>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="corner-logo">
+    <span class="logo-mark">B</span>
+    <span>Bewerbungssammler</span>
+  </div>
+
+  <script src="vendor/reveal.js/dist/reveal.js"></script>
+  <script src="vendor/reveal.js/plugin/notes/notes.js"></script>
+  <script src="vendor/reveal.js/plugin/zoom/zoom.js"></script>
+  <script src="vendor/reveal.js/plugin/highlight/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      width: 1920,
+      height: 1080,
+      margin: 0.06,
+      minScale: 0.2,
+      maxScale: 2.0,
+
+      controls: true,
+      progress: true,
+      slideNumber: 'c/t',
+      hash: true,
+      history: true,
+      center: false,
+
+      transition: 'zoom',
+      transitionSpeed: 'default', // reveal.js "default" = 800ms, liegt im geforderten 600–800ms-Fenster
+      backgroundTransition: 'zoom',
+
+      plugins: [ RevealNotes, RevealZoom, RevealHighlight ]
+    });
+
+    // Eck-Logo (dezent) nur auf den mittleren Folien zeigen -- Titel- und
+    // Schlussfolie tragen ihr eigenes, großes Logo bereits im Slide-Inhalt.
+    function updateCornerLogo() {
+      var current = Reveal.getCurrentSlide();
+      var hide = current && current.hasAttribute('data-corner-logo');
+      document.body.classList.toggle('hide-corner-logo', !!hide);
+    }
+    Reveal.on('slidechanged', updateCornerLogo);
+    Reveal.on('ready', updateCornerLogo);
+  </script>
+</body>
+</html>
