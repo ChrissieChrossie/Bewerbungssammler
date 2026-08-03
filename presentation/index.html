@@ -187,16 +187,17 @@
           </div>
           <div class="card fragment fade-up">
             <h3>Docker + Terraform</h3>
-            <p>Lokale Entwicklung reproduzierbar, AWS-Infrastruktur als Code.</p>
+            <p>Lokale Entwicklung reproduzierbar, AWS-Infrastruktur als Code <br> Eigene <code>docker start/stop/restart/install</code>-Commands fürs Onboarding.</p>
           </div>
           <div class="card fragment fade-up">
             <h3>Lambda + EventBridge + SES</h3>
-            <p>Tägliche Automation ganz ohne eigenen Server — läuft nur, wenn sie wirklich etwas zu tun hat.</p>
+            <p>Tägliche Automation ganz ohne eigenen Server; läuft nur, wenn sie wirklich etwas zu tun hat.</p>
           </div>
         </div>
         <aside class="notes">
           Pro Karte höchstens einen Satz sagen, nicht vorlesen. FastAPI kurz einordnen: "Python-Framework, spezialisiert auf REST-APIs, ähnlich zu Express bei Node.js, nur mit eingebauter Validierung."<br>
           Lambda-Karte: EventBridge = Cron-Trigger in AWS, SES = AWS-Maildienst zum Versenden. Zusammen: täglicher Check überfälliger Bewerbungen + Mail-Report, ohne dauerhaft laufenden Server.<br>
+          Docker-Karte: kurz erwähnen, dass die vier Commands Docker/Daemon prüfen, Migrationen abwarten und am Ende alle erreichbaren URLs ausgeben — nicht vertiefen, nur als Beleg für durchdachtes Onboarding.<br>
           Falls Zeit fehlt: diese Folie im Zweifel kürzen, nicht die Demo.
         </aside>
       </section>
