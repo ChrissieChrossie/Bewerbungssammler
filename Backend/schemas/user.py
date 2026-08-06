@@ -11,10 +11,6 @@ class UserBase(BaseModel):
     email: EmailStr
 
 
-class UserCreate(UserBase):
-    """Schema zum Anlegen eines Nutzers."""
-
-
 class UserUpdate(BaseModel):
     """Schema zum teilweisen Aktualisieren eines Nutzers."""
 

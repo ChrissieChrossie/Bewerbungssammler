@@ -6,13 +6,12 @@ import Modal from '../components/Modal'
 import FormInput from '../components/FormInput'
 import FormSelect from '../components/FormSelect'
 import StatusBadge from '../components/StatusBadge'
-import { applicationApi, companyApi, jobPostingApi, userApi } from '../api/client'
+import { applicationApi, companyApi, jobPostingApi } from '../api/client'
 
 export default function ApplicationsPage() {
   const [applications, setApplications] = useState([])
   const [companies, setCompanies] = useState([])
   const [jobPostings, setJobPostings] = useState([])
-  const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
@@ -22,7 +21,6 @@ export default function ApplicationsPage() {
   const [searchTerm, setSearchTerm] = useState('')
 
   const [formData, setFormData] = useState({
-    user_id: '',
     job_posting_id: '',
     applied_at: new Date().toISOString().split('T')[0],
     status: 'open',
@@ -39,16 +37,14 @@ export default function ApplicationsPage() {
     try {
       setLoading(true)
       setError(null)
-      const [appsRes, companiesRes, jobsRes, usersRes] = await Promise.all([
+      const [appsRes, companiesRes, jobsRes] = await Promise.all([
         applicationApi.getAll(),
         companyApi.getAll(),
-        jobPostingApi.getAll(),
-        userApi.getAll()
+        jobPostingApi.getAll()
       ])
       setApplications(appsRes.data || [])
       setCompanies(companiesRes.data || [])
       setJobPostings(jobsRes.data || [])
-      setUsers(usersRes.data || [])
     } catch (err) {
       setError(err.response?.data?.detail || 'Fehler beim Laden der Daten')
     } finally {
@@ -58,7 +54,6 @@ export default function ApplicationsPage() {
 
   const validateForm = () => {
     const errors = {}
-    if (!formData.user_id) errors.user_id = 'Bewerber ist erforderlich'
     if (!formData.job_posting_id) errors.job_posting_id = 'Stellenausschreibung ist erforderlich'
     if (!formData.applied_at) errors.applied_at = 'Bewerbungsdatum ist erforderlich'
     if (!formData.status) errors.status = 'Status ist erforderlich'
@@ -90,7 +85,6 @@ export default function ApplicationsPage() {
     if (app) {
       setEditingId(app.id)
       setFormData({
-        user_id: app.user_id?.toString() || '',
         job_posting_id: app.job_posting_id?.toString() || '',
         applied_at: app.applied_at || '',
         status: app.status || 'open',
@@ -99,7 +93,6 @@ export default function ApplicationsPage() {
     } else {
       setEditingId(null)
       setFormData({
-        user_id: '',
         job_posting_id: '',
         applied_at: new Date().toISOString().split('T')[0],
         status: 'open',
@@ -135,10 +128,6 @@ export default function ApplicationsPage() {
     const posting = getJobPosting(jobPostingId)
     if (!posting) return 'Unbekannt'
     return companies.find(c => c.id === posting.company_id)?.name || 'Unbekannt'
-  }
-
-  const getUserName = (id) => {
-    return users.find(u => u.id === id)?.name || 'Unbekannt'
   }
 
   let filteredApplications = applications
@@ -215,7 +204,6 @@ export default function ApplicationsPage() {
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900">{getJobTitle(app.job_posting_id)}</h3>
                   <p className="text-sm text-gray-600 mt-1">🏢 {getCompanyNameForJobPosting(app.job_posting_id)}</p>
-                  <p className="text-xs text-gray-500 mt-1">👤 {getUserName(app.user_id)}</p>
                   <p className="text-xs text-gray-500 mt-1">📅 {app.applied_at ? new Date(app.applied_at).toLocaleDateString('de-DE') : 'Unbekannt'}</p>
                   {app.note && <p className="text-sm text-gray-700 mt-2">📝 {app.note}</p>}
                 </div>
@@ -249,15 +237,6 @@ export default function ApplicationsPage() {
         size="lg"
       >
         <form onSubmit={handleSubmit}>
-          <FormSelect
-            label="Bewerber"
-            value={formData.user_id}
-            onChange={e => setFormData({ ...formData, user_id: e.target.value })}
-            options={users.map(u => ({ value: u.id, label: u.name }))}
-            error={formErrors.user_id}
-            required
-          />
-
           <FormSelect
             label="Stellenausschreibung"
             value={formData.job_posting_id}

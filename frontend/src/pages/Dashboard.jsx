@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import LoadingSpinner from '../components/LoadingSpinner'
 import ErrorMessage from '../components/ErrorMessage'
 import { applicationApi, companyApi } from '../api/client'
@@ -48,10 +49,10 @@ export default function Dashboard() {
   if (error) return <ErrorMessage message={error} onRetry={loadData} />
 
   const statCards = [
-    { label: 'Bewerbungen insgesamt', value: stats?.totalApplications || 0, icon: '📋', gradient: 'from-violet-500 to-fuchsia-500' },
-    { label: 'Unternehmen', value: stats?.totalCompanies || 0, icon: '🏢', gradient: 'from-indigo-500 to-violet-500' },
-    { label: 'Offen', value: stats?.statusCounts.open || 0, icon: '📝', gradient: 'from-amber-400 to-orange-500' },
-    { label: 'Einladungen', value: stats?.statusCounts.invited || 0, icon: '✉️', gradient: 'from-emerald-400 to-teal-500' },
+    { label: 'Bewerbungen insgesamt', value: stats?.totalApplications || 0, icon: '📋', gradient: 'from-violet-500 to-fuchsia-500', to: '/dashboard/applications' },
+    { label: 'Unternehmen', value: stats?.totalCompanies || 0, icon: '🏢', gradient: 'from-indigo-500 to-violet-500', to: '/dashboard/companies' },
+    { label: 'Offen', value: stats?.statusCounts.open || 0, icon: '📝', gradient: 'from-amber-400 to-orange-500', to: '/dashboard/applications' },
+    { label: 'Einladungen', value: stats?.statusCounts.invited || 0, icon: '✉️', gradient: 'from-emerald-400 to-teal-500', to: '/dashboard/applications' },
   ]
 
   return (
@@ -63,7 +64,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {statCards.map((card, idx) => (
-          <div key={idx} className="card-lg">
+          <Link key={idx} to={card.to} className="card-lg block cursor-pointer">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">{card.label}</p>
@@ -73,7 +74,7 @@ export default function Dashboard() {
                 {card.icon}
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 
