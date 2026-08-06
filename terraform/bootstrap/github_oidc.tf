@@ -264,6 +264,92 @@ resource "aws_iam_role_policy" "github_actions" {
           "cloudfront:GetInvalidation",
         ]
         Resource = "*"
+      },
+      {
+        # Eng gescopt auf die Lambda-Rolle der Automation - analog zu IamForAppRunnerRole.
+        Sid    = "IamForAutomationLambdaRole"
+        Effect = "Allow"
+        Action = [
+          "iam:CreateRole",
+          "iam:DeleteRole",
+          "iam:GetRole",
+          "iam:TagRole",
+          "iam:UntagRole",
+          "iam:PutRolePolicy",
+          "iam:DeleteRolePolicy",
+          "iam:GetRolePolicy",
+          "iam:PassRole",
+        ]
+        Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.project_name}-automation-lambda-role"
+      },
+      {
+        Sid    = "CloudWatchLogsForAutomationLambda"
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:DeleteLogGroup",
+          "logs:PutRetentionPolicy",
+          "logs:TagResource",
+          "logs:UntagResource",
+          "logs:ListTagsForResource",
+        ]
+        Resource = "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${var.project_name}-automation*"
+      },
+      {
+        # DescribeLogGroups unterstuetzt kein Resource-Scoping, daher separates Statement mit "*".
+        Sid      = "CloudWatchLogsDescribe"
+        Effect   = "Allow"
+        Action   = ["logs:DescribeLogGroups"]
+        Resource = "*"
+      },
+      {
+        Sid    = "LambdaManagement"
+        Effect = "Allow"
+        Action = [
+          "lambda:CreateFunction",
+          "lambda:DeleteFunction",
+          "lambda:GetFunction",
+          "lambda:GetFunctionConfiguration",
+          "lambda:UpdateFunctionCode",
+          "lambda:UpdateFunctionConfiguration",
+          "lambda:TagResource",
+          "lambda:UntagResource",
+          "lambda:ListTags",
+          "lambda:AddPermission",
+          "lambda:RemovePermission",
+          "lambda:GetPolicy",
+        ]
+        Resource = "arn:aws:lambda:${var.aws_region}:${data.aws_caller_identity.current.account_id}:function:${var.project_name}-automation"
+      },
+      {
+        Sid    = "EventBridgeManagement"
+        Effect = "Allow"
+        Action = [
+          "events:PutRule",
+          "events:DeleteRule",
+          "events:DescribeRule",
+          "events:PutTargets",
+          "events:RemoveTargets",
+          "events:ListTargetsByRule",
+          "events:ListTagsForResource",
+          "events:TagResource",
+          "events:UntagResource",
+          "events:EnableRule",
+          "events:DisableRule",
+        ]
+        Resource = "arn:aws:events:${var.aws_region}:${data.aws_caller_identity.current.account_id}:rule/${var.project_name}-daily-automation"
+      },
+      {
+        # SES-Identity-ARNs sind nicht sinnvoll vorhersagbar vor dem Apply (E-Mail als ARN-Teil),
+        # deshalb wie schon in lambda.tf's eigener Policy Resource "*" statt Scoping.
+        Sid    = "SesEmailIdentityManagement"
+        Effect = "Allow"
+        Action = [
+          "ses:VerifyEmailIdentity",
+          "ses:DeleteIdentity",
+          "ses:GetIdentityVerificationAttributes",
+        ]
+        Resource = "*"
       }
     ]
   })

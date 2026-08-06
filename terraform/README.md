@@ -54,6 +54,7 @@ terraform output
 | `TF_STATE_BUCKET`            | Output `tf_state_bucket` aus Schritt 1         |
 | `TF_STATE_DYNAMODB_TABLE`    | Output `tf_lock_table` aus Schritt 1           |
 | `ALLOWED_CIDR_BLOCKS`        | z.B. `["203.0.113.5/32"]`                     |
+| `AUTOMATION_RECIPIENT_EMAIL` | Empfänger-Email für die täglichen Reports (im SES-Sandbox-Modus muss sie verifiziert sein) |
 | `ECR_REPOSITORY_URL`         | Output `ecr_repository_url` (nach Schritt 4)  |
 | `APPRUNNER_SERVICE_ARN`      | Output `apprunner_service_arn` (nach Schritt 5) |
 | `FRONTEND_BUCKET`            | Output `frontend_bucket_name` (nach Schritt 5) |

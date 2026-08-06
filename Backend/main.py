@@ -2,16 +2,24 @@
 
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
-from database import engine, Base
-from routers import users, companies, job_postings, applications
+from core.config import settings
+from core.rate_limit import limiter
+from database import run_migrations
+from routers import auth, users, companies, job_postings, applications
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    """Legt beim Start der App die Tabellen an (für lokale Entwicklung / SQLite)."""
-    Base.metadata.create_all(bind=engine)
+    """Bringt das DB-Schema per Alembic auf den neuesten Stand (siehe database.run_migrations)."""
+    run_migrations()
     yield
 
 
@@ -22,6 +30,28 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[settings.frontend_origin],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_error_handler(_request: Request, exc: RequestValidationError):
+    """Validierungsfehler (u.a. Registrierung/Login) als 400 mit strukturierten Feldfehlern."""
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={"detail": jsonable_encoder(exc.errors())},
+    )
+
+
+app.include_router(auth.router, prefix="/api")
 app.include_router(users.router, prefix="/api")
 app.include_router(companies.router, prefix="/api")
 app.include_router(job_postings.router, prefix="/api")

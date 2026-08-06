@@ -8,7 +8,6 @@ from models.application import ApplicationStatus
 class ApplicationBase(BaseModel):
     """Gemeinsame Felder aller Application-Schemas."""
 
-    user_id: int
     job_posting_id: int
     status: ApplicationStatus = ApplicationStatus.OPEN
     applied_at: date
@@ -16,7 +15,7 @@ class ApplicationBase(BaseModel):
 
 
 class ApplicationCreate(ApplicationBase):
-    """Schema zum Anlegen einer Bewerbung."""
+    """Schema zum Anlegen einer Bewerbung. user_id kommt aus der Session, nicht vom Client."""
 
 
 class ApplicationUpdate(BaseModel):
@@ -31,5 +30,6 @@ class ApplicationRead(ApplicationBase):
     """Schema zum Auslesen einer Bewerbung."""
 
     id: int
+    user_id: int
 
     model_config = {"from_attributes": True}

@@ -7,6 +7,7 @@ export default function FormInput({
   onChange,
   error,
   required = false,
+  endAdornment,
   ...props
 }) {
   const inputId = id || (label ? `field-${label.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` : undefined)
@@ -19,18 +20,23 @@ export default function FormInput({
           {required && <span className="text-red-600" aria-hidden="true"> *</span>}
         </label>
       )}
-      <input
-        id={inputId}
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        required={required}
-        aria-invalid={error ? 'true' : undefined}
-        aria-describedby={error ? `${inputId}-error` : undefined}
-        className={`input ${error ? 'input-error' : ''}`}
-        {...props}
-      />
+      <div className="relative">
+        <input
+          id={inputId}
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          required={required}
+          aria-invalid={error ? 'true' : undefined}
+          aria-describedby={error ? `${inputId}-error` : undefined}
+          className={`input ${endAdornment ? 'pr-11' : ''} ${error ? 'input-error' : ''}`}
+          {...props}
+        />
+        {endAdornment && (
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3">{endAdornment}</div>
+        )}
+      </div>
       {error && <p id={`${inputId}-error`} className="text-red-600 text-sm mt-1">{error}</p>}
     </div>
   )

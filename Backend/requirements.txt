@@ -6,6 +6,12 @@ pydantic-settings==2.5.2
 email-validator==2.2.0
 python-dotenv==1.0.1
 
+# Auth: Passwort-Hashing, JWT, Migrationen, Rate Limiting
+bcrypt==4.2.0
+pyjwt==2.9.0
+alembic==1.13.3
+slowapi==0.1.9
+
 # AWS (für spätere Anbindung)
 boto3==1.35.0
 
